@@ -1,6 +1,6 @@
 export interface IRegisterAccountDTO {
   name: string;
-  cpf: number;
+  cpf: string;
   cellphone: number;
   score: number;
   negative: boolean;
