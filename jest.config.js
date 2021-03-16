@@ -6,7 +6,7 @@ module.exports = {
     ],
     coverageDirectory: 'coverage',
     coverageProvider: 'v8',
-    preset: '@shelf/jest-mongodb',
+    preset: 'ts-jest',
     testEnvironment: 'node',
     testMatch: ['**/*.spec.ts'],
     transform: {
