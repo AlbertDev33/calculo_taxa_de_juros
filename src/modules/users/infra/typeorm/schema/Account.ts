@@ -9,7 +9,7 @@ export class Account {
 
   cpf: string;
 
-  cellphone: number;
+  cellPhone: number;
 
   score: number;
 

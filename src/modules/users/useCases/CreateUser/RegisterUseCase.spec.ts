@@ -88,7 +88,7 @@ describe('Create User', () => {
       name: 'valid_name',
       email: 'any_email@mail.com',
       cpf: '123456',
-      cellphone: 999999,
+      cellPhone: 999999,
       score: 500,
       negative: false,
     };
@@ -106,7 +106,7 @@ describe('Create User', () => {
       name: 'valid_name',
       email: 'any_email@mail.com',
       cpf: 'hashed_value',
-      cellphone: 999999,
+      cellPhone: 999999,
       score: 500,
       negative: false,
     });
@@ -119,7 +119,7 @@ describe('Create User', () => {
       name: 'valid_name',
       email: 'any_email@mail.com',
       cpf: '123456',
-      cellphone: 999999,
+      cellPhone: 999999,
       score: 500,
       negative: false,
     };
@@ -141,7 +141,7 @@ describe('Create User', () => {
       name: 'valid_name',
       email: 'any_email@mail.com',
       cpf: '1234567',
-      cellphone: 999999,
+      cellPhone: 999999,
       score: 500,
       negative: false,
     };
@@ -160,7 +160,7 @@ describe('Create User', () => {
       name: 'valid_name',
       email: 'any_email@mail.com',
       cpf: '1234567',
-      cellphone: 999999,
+      cellPhone: 999999,
       score: 500,
       negative: false,
     };

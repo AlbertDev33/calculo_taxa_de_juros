@@ -2,7 +2,7 @@ export interface IRegisterAccountDTO {
   name: string;
   email: string;
   cpf: string;
-  cellphone: number;
+  cellPhone: number;
   score: number;
   negative: boolean;
 }

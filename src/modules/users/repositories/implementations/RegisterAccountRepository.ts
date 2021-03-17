@@ -21,7 +21,7 @@ export class RegisterAccountRepository implements IRegisterAccountRepository {
     name,
     email,
     cpf,
-    cellphone,
+    cellPhone,
     score,
     negative,
   }: IRegisterAccountDTO): Promise<Account> {
@@ -31,7 +31,7 @@ export class RegisterAccountRepository implements IRegisterAccountRepository {
       name,
       email,
       cpf,
-      cellphone,
+      cellPhone,
       score,
       negative,
     });
