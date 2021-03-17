@@ -29,6 +29,17 @@ const makeRegisterAccountRepository = (): IRegisterAccountRepository => {
     async create(account: IRegisterAccountDTO): Promise<Account> {
       return new Promise(resolve => resolve({ ...account, id: 'valid_id' }));
     }
+    findByCpf(cpf: string): Account {
+      const fakeRegister = {
+        name: 'valid_name',
+        cpf: '123456',
+        cellphone: 999999,
+        score: 500,
+        negative: false,
+      };
+
+      return fakeRegister;
+    }
   }
   return new RegisterAccountStub();
 };
@@ -49,18 +60,16 @@ const makeSut = (): ISutTypes => {
 };
 
 describe('Create User', () => {
-  it('Sholud be able to register with valid cpf', async () => {
+  it('Should be able to register with valid cpf', async () => {
     const { sut, cpfValidatorStub } = makeSut();
 
     const fakeRegister = {
       name: 'valid_name',
-      cpf: '123456',
+      cpf: '1234567',
       cellphone: 999999,
       score: 500,
       negative: false,
     };
-
-    cpf.isValid(fakeRegister.cpf);
 
     const cpfValidator = jest
       .spyOn(cpfValidatorStub, 'isValid')
@@ -68,11 +77,11 @@ describe('Create User', () => {
 
     const register = await sut.execute(fakeRegister);
 
-    expect(cpfValidator).toHaveBeenCalledWith('123456');
+    expect(cpfValidator).toHaveBeenCalledWith('1234567');
     expect(register).toHaveProperty('id');
   });
 
-  it('Sholud not be able to register with invalid cpf', async () => {
+  it('Should not be able to register with invalid cpf', async () => {
     const { sut, cpfValidatorStub } = makeSut();
 
     const fakeRegister = {
@@ -91,5 +100,21 @@ describe('Create User', () => {
 
     expect(cpfValidator).toBe(false);
     await expect(register).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should not be able to register with a cpf that already exists', async () => {
+    const { sut } = makeSut();
+
+    const duplicateFakeRegister = {
+      name: 'valid_name',
+      cpf: '123456',
+      cellphone: 999999,
+      score: 500,
+      negative: false,
+    };
+
+    const duplicateRegister = sut.execute(duplicateFakeRegister);
+
+    await expect(duplicateRegister).rejects.toBeInstanceOf(AppError);
   });
 });
