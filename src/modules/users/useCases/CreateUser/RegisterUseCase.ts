@@ -57,7 +57,7 @@ export class RegisterUseCase {
       email,
       cpf: hashedCpf,
       cellphone,
-      score,
+      score: 500,
       negative,
     });
 
