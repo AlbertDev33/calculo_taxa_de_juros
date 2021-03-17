@@ -9,8 +9,6 @@ interface IRequest {
   email: string;
   cpf: string;
   cellphone: number;
-  score: number;
-  negative: boolean;
 }
 
 export class RegisterUseCase {
@@ -22,14 +20,7 @@ export class RegisterUseCase {
     private hashProvider: IHashProvider,
   ) {}
 
-  async execute({
-    name,
-    email,
-    cpf,
-    cellphone,
-    score,
-    negative,
-  }: IRequest): Promise<Account> {
+  async execute({ name, email, cpf, cellphone }: IRequest): Promise<Account> {
     const cpfValidator = this.cpfValidatorProvider.isValid(cpf);
 
     if (!cpfValidator) {
@@ -52,15 +43,15 @@ export class RegisterUseCase {
 
     const hashedCpf = await this.hashProvider.generateHash(cpf);
 
-    const account = await this.registerAccountRepository.create({
+    const createAccount = await this.registerAccountRepository.create({
       name,
       email,
       cpf: hashedCpf,
       cellphone,
       score: 500,
-      negative,
+      negative: false,
     });
 
-    return account;
+    return createAccount;
   }
 }
