@@ -9,6 +9,12 @@ export class RegisterAccountRepository implements IRegisterAccountRepository {
     this.account = [];
   }
 
+  findByCpf(cpf: string): Account {
+    const findCpf = this.account.find(searchCpf => searchCpf.cpf === cpf);
+
+    return findCpf;
+  }
+
   async create({
     name,
     cpf,

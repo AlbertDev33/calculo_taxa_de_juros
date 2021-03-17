@@ -28,7 +28,16 @@ export class RegisterUseCase {
     const cpfValidator = this.cpfValidatorProvider.isValid(cpf);
 
     if (!cpfValidator) {
-      throw new AppError('Invalid Cpf', 400);
+      throw new AppError('Invalid CPF', 400);
+    }
+
+    const findCpf = this.registerAccountRepository.findByCpf(cpf);
+
+    if (findCpf.cpf === cpf) {
+      throw new AppError(
+        'Invalid CPF. Verify if already exist a register with this CPF',
+        400,
+      );
     }
 
     const account = await this.registerAccountRepository.create({
