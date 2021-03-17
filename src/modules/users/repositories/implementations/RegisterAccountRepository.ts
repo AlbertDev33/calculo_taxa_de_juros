@@ -9,14 +9,17 @@ export class RegisterAccountRepository implements IRegisterAccountRepository {
     this.account = [];
   }
 
-  findByCpf(cpf: string): Account {
-    const findCpf = this.account.find(searchCpf => searchCpf.cpf === cpf);
+  async findByEmail(email: string): Promise<Account | undefined> {
+    const findEmail = this.account.find(
+      searchEmail => searchEmail.email === email,
+    );
 
-    return findCpf;
+    return findEmail;
   }
 
   async create({
     name,
+    email,
     cpf,
     cellphone,
     score,
@@ -26,6 +29,7 @@ export class RegisterAccountRepository implements IRegisterAccountRepository {
 
     Object.assign(account, {
       name,
+      email,
       cpf,
       cellphone,
       score,

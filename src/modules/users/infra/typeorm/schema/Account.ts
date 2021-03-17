@@ -5,6 +5,8 @@ export class Account {
 
   name: string;
 
+  email: string;
+
   cpf: string;
 
   cellphone: number;
