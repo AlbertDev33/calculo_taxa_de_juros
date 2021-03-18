@@ -51,28 +51,34 @@ export class ConsultSessionUseCase {
         score: 0,
       };
 
-      const { secret, expiresIn } = authConfig.jwt;
-      const tempScore = tempAccount.score;
-
-      const token = this.tokenManagerProvider.sign({ tempScore }, secret, {
-        subject: tempAccount.cpf,
-        expiresIn,
-      });
+      const token = await this.generateToken(
+        cpf,
+        tempAccount.cpf,
+        tempAccount.score,
+      );
 
       return { token, user: tempAccount };
     }
 
-    await this.hashProvider.compareHash(cpf, user.cpf);
+    const token = await this.generateToken(cpf, user.cpf, user.score);
+
+    return { token, user };
+  }
+
+  private async generateToken(
+    cpf: string,
+    userCpf: string,
+    score: number,
+  ): Promise<string> {
+    await this.hashProvider.compareHash(cpf, userCpf);
 
     const { secret, expiresIn } = authConfig.jwt;
 
-    const userScore = user.score;
-
-    const token = this.tokenManagerProvider.sign({ userScore }, secret, {
-      subject: user.cpf,
+    const token = this.tokenManagerProvider.sign({ score }, secret, {
+      subject: userCpf,
       expiresIn,
     });
 
-    return { token, user };
+    return token;
   }
 }
