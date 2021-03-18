@@ -15,6 +15,8 @@ export class Account {
 
   negative: boolean;
 
+  created_at: Date;
+
   constructor() {
     if (!this.id) {
       this.id = uuidv4();
