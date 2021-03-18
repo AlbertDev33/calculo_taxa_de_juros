@@ -116,12 +116,7 @@ describe('CunsultUseCase', () => {
   });
 
   it('Should be able to create a session for an unregistered user', async () => {
-    const {
-      sut,
-      registerAccountRepositoryStub,
-      hashProviderStub,
-      tokenManager,
-    } = makeSut();
+    const { sut } = makeSut();
 
     const unregistered = {
       email: 'any_email@mail.com',
@@ -131,10 +126,6 @@ describe('CunsultUseCase', () => {
     };
 
     const unregisteredUserSession = await sut.execute(unregistered);
-
-    jest.spyOn(registerAccountRepositoryStub, 'findByEmail');
-    jest.spyOn(hashProviderStub, 'generateHash');
-    jest.spyOn(tokenManager, 'sign');
 
     expect(unregisteredUserSession).toEqual({
       token: 'generateToken',
@@ -148,12 +139,7 @@ describe('CunsultUseCase', () => {
   });
 
   it('Should be able to create a session for an registered user', async () => {
-    const {
-      sut,
-      registerAccountRepositoryStub,
-      hashProviderStub,
-      tokenManager,
-    } = makeSut();
+    const { sut, registerAccountRepositoryStub } = makeSut();
 
     const registered = {
       name: 'valid_name',
@@ -167,9 +153,6 @@ describe('CunsultUseCase', () => {
     jest
       .spyOn(registerAccountRepositoryStub, 'findByEmail')
       .mockReturnValueOnce(new Promise(resolve => resolve(registered)));
-
-    jest.spyOn(hashProviderStub, 'compareHash');
-    jest.spyOn(tokenManager, 'sign');
 
     const registeredUserSession = await sut.execute(registered);
 
