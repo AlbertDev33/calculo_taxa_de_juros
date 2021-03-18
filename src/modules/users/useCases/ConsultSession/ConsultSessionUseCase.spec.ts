@@ -106,9 +106,30 @@ describe('CunsultUseCase', () => {
       cpf: '123456',
       cellPhone: 99999,
       score: 0,
+      negative: false,
     };
 
     jest.spyOn(cpfValidatorStub, 'isValid').mockReturnValueOnce(false);
+
+    const session = sut.execute(fakeSession);
+
+    await expect(session).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should throw if is invalid compare hash cpf', async () => {
+    const { sut, hashProviderStub } = makeSut();
+
+    const fakeSession = {
+      email: 'any_email@mail.com',
+      cpf: '123456',
+      cellPhone: 99999,
+      score: 0,
+      negative: false,
+    };
+
+    jest
+      .spyOn(hashProviderStub, 'compareHash')
+      .mockReturnValueOnce(new Promise(resolve => resolve(false)));
 
     const session = sut.execute(fakeSession);
 
@@ -123,6 +144,7 @@ describe('CunsultUseCase', () => {
       cpf: '123456',
       cellPhone: 99999,
       score: 0,
+      negative: false,
     };
 
     const unregisteredUserSession = await sut.execute(unregistered);
@@ -134,6 +156,7 @@ describe('CunsultUseCase', () => {
         cpf: 'hashed_value',
         cellPhone: 99999,
         score: 0,
+        negative: false,
       },
     });
   });
