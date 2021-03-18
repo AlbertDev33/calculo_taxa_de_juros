@@ -56,12 +56,18 @@ export class ConsultSessionUseCase {
         cpf,
         tempAccount.cpf,
         tempAccount.score,
+        tempAccount.negative,
       );
 
       return { token, user: tempAccount };
     }
 
-    const token = await this.generateToken(cpf, user.cpf, user.score);
+    const token = await this.generateToken(
+      cpf,
+      user.cpf,
+      user.score,
+      user.negative,
+    );
 
     return { token, user };
   }
@@ -70,6 +76,7 @@ export class ConsultSessionUseCase {
     cpf: string,
     userCpf: string,
     score: number,
+    negative: boolean,
   ): Promise<string> {
     const isValidCpf = await this.hashProvider.compareHash(cpf, userCpf);
 
@@ -79,7 +86,7 @@ export class ConsultSessionUseCase {
 
     const { secret, expiresIn } = authConfig.jwt;
 
-    const token = this.tokenManagerProvider.sign({ score }, secret, {
+    const token = this.tokenManagerProvider.sign({ score, negative }, secret, {
       subject: userCpf,
       expiresIn,
     });
