@@ -1,7 +1,5 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable max-classes-per-file */
-import jwt from 'jsonwebtoken';
-
 import { AppError } from '../../../../shared/errors/AppError';
 import { ICpfValidatorProvider } from '../../../../shared/providers/CpfValidator/protocol/ICpfValidatorProvider';
 import { IHashProvider } from '../../../../shared/providers/HashProvider/protocol/IHashProvider';
@@ -40,7 +38,7 @@ const makeHash = (): IHashProvider => {
       return new Promise(resolve => resolve(payload));
     }
     compareHash(payload: string, hashed: string): Promise<boolean> {
-      throw new Error('Method not implemented.');
+      return new Promise(resolve => resolve(true));
     }
   }
 
@@ -132,13 +130,13 @@ describe('CunsultUseCase', () => {
       score: 0,
     };
 
-    const session = await sut.execute(unregistered);
+    const unregisteredUserSession = await sut.execute(unregistered);
 
     jest.spyOn(registerAccountRepositoryStub, 'findByEmail');
     jest.spyOn(hashProviderStub, 'generateHash');
     jest.spyOn(tokenManager, 'sign');
 
-    expect(session).toEqual({
+    expect(unregisteredUserSession).toEqual({
       token: 'generateToken',
       user: {
         email: 'any_email@mail.com',
@@ -149,5 +147,42 @@ describe('CunsultUseCase', () => {
     });
   });
 
-  it('Should be able to create a session for an registered user', async () => {});
+  it('Should be able to create a session for an registered user', async () => {
+    const {
+      sut,
+      registerAccountRepositoryStub,
+      hashProviderStub,
+      tokenManager,
+    } = makeSut();
+
+    const registered = {
+      name: 'valid_name',
+      email: 'any_email@mail.com',
+      cpf: '123456',
+      cellPhone: 999999,
+      score: 500,
+      negative: false,
+    };
+
+    jest
+      .spyOn(registerAccountRepositoryStub, 'findByEmail')
+      .mockReturnValueOnce(new Promise(resolve => resolve(registered)));
+
+    jest.spyOn(hashProviderStub, 'compareHash');
+    jest.spyOn(tokenManager, 'sign');
+
+    const registeredUserSession = await sut.execute(registered);
+
+    expect(registeredUserSession).toEqual({
+      token: 'generateToken',
+      user: {
+        name: 'valid_name',
+        email: 'any_email@mail.com',
+        cpf: '123456',
+        cellPhone: 999999,
+        score: 500,
+        negative: false,
+      },
+    });
+  });
 });
