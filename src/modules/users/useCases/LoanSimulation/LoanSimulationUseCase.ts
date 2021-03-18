@@ -37,6 +37,15 @@ export class LoanSimulationUseCase {
       return findInterestRate;
     }
 
+    if (user.score <= 500) {
+      const type = 'SCORE_BAIXO';
+      const findInterestRate = await this.interestRateRepository.findRateLowScore(
+        { type, installments },
+      );
+
+      return findInterestRate;
+    }
+
     return 1;
   }
 }
