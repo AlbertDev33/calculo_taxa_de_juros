@@ -49,6 +49,7 @@ export class ConsultSessionUseCase {
         cpf: hashedCpf,
         cellPhone,
         score: 0,
+        negative: false,
       };
 
       const token = await this.generateToken(
@@ -70,7 +71,11 @@ export class ConsultSessionUseCase {
     userCpf: string,
     score: number,
   ): Promise<string> {
-    await this.hashProvider.compareHash(cpf, userCpf);
+    const isValidCpf = await this.hashProvider.compareHash(cpf, userCpf);
+
+    if (!isValidCpf) {
+      throw new AppError('Invalid CPF. Try again!');
+    }
 
     const { secret, expiresIn } = authConfig.jwt;
 
