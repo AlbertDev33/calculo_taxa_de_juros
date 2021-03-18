@@ -1,5 +1,3 @@
-import { sign } from 'jsonwebtoken';
-
 import authConfig from '../../../../config/auth';
 import { AppError } from '../../../../shared/errors/AppError';
 import { ICpfValidatorProvider } from '../../../../shared/providers/CpfValidator/protocol/ICpfValidatorProvider';
@@ -64,6 +62,17 @@ export class ConsultSessionUseCase {
       return { token, user: tempAccount };
     }
 
-    return user;
+    await this.hashProvider.compareHash(cpf, user.cpf);
+
+    const { secret, expiresIn } = authConfig.jwt;
+
+    const userScore = user.score;
+
+    const token = this.tokenManagerProvider.sign({ userScore }, secret, {
+      subject: user.cpf,
+      expiresIn,
+    });
+
+    return { token, user };
   }
 }
