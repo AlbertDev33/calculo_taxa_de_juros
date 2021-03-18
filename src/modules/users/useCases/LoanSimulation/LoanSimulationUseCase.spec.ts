@@ -3,7 +3,6 @@ import { AppError } from '../../../../shared/errors/AppError';
 import { InterestRateDTO } from '../../dtos/InterestRateDTO';
 import { IRegisterAccountDTO } from '../../dtos/IRegisterAccountDTO';
 import { Account } from '../../infra/typeorm/schema/Account';
-import { Rate } from '../../infra/typeorm/schema/Rate';
 import { IInterestRateRepository } from '../../repositories/protocol/IInterestRateRepository';
 import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
 import { LoanSimulationUseCase } from './LoanSimulationUseCase';
@@ -80,7 +79,7 @@ describe('Loan Simulation', () => {
 
     const fakeAccount = {
       email: 'any_email@mail.com',
-      cpf: '123456',
+      cpf: 'hashed_cpf',
       score: 0,
       negative: false,
       installments: 6,
@@ -96,7 +95,7 @@ describe('Loan Simulation', () => {
 
     const fakeAccount = {
       email: 'any_email@mail.com',
-      cpf: '123456',
+      cpf: 'hashed_cpf',
       score: 500,
       negative: false,
       installments: 6,
@@ -117,5 +116,33 @@ describe('Loan Simulation', () => {
     const loanSimulation = await sut.execute(fakeAccount);
 
     expect(loanSimulation).toEqual(0.055);
+  });
+
+  it('Should verify interest rates for an registered user with low score', async () => {
+    const { sut, registerAccountRepositoryStub } = makeSut();
+
+    const fakeAccount = {
+      email: 'any_email@mail.com',
+      cpf: 'hashed_cpf',
+      score: 550,
+      negative: false,
+      installments: 6,
+    };
+
+    jest
+      .spyOn(registerAccountRepositoryStub, 'findByEmail')
+      .mockReturnValueOnce(
+        new Promise(resolve =>
+          resolve({
+            ...fakeAccount,
+            name: 'any_name',
+            cellPhone: 9999,
+          }),
+        ),
+      );
+
+    const loanSimulation = await sut.execute(fakeAccount);
+
+    expect(loanSimulation).toEqual(0.04);
   });
 });
