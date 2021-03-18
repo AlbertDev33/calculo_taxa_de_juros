@@ -46,6 +46,11 @@ export class LoanSimulationUseCase {
       return findInterestRate;
     }
 
-    return 1;
+    const type = 'SCORE_ALTO';
+    const findInterestRate = await this.interestRateRepository.findRateHightScore(
+      { type, installments },
+    );
+
+    return findInterestRate;
   }
 }
