@@ -1,32 +1,42 @@
 import { AppError } from '../../../../shared/errors/AppError';
+import { IInterestRateRepository } from '../../repositories/protocol/IInterestRateRepository';
 import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
 
 interface IRequest {
   email: string;
   cpf: string;
   score: number;
-  negative: boolean;
   installments: number;
 }
 
 export class LoanSimulationUseCase {
-  constructor(private registerAccountRepository: IRegisterAccountRepository) {}
+  constructor(
+    private registerAccountRepository: IRegisterAccountRepository,
+
+    private interestRateRepository: IInterestRateRepository,
+  ) {}
 
   async execute({
     email,
     cpf,
     score,
-    negative,
     installments,
-  }: IRequest): Promise<object> {
+  }: IRequest): Promise<number> {
     const user = await this.registerAccountRepository.findByEmail(email);
 
-    if (!user.email) {
-      if (score < 0) {
-        throw new AppError('Low Score. Try again later!');
-      }
+    if (score < 0) {
+      throw new AppError('Low Score. Try again later!');
     }
 
-    return {};
+    if (!user.email) {
+      const type = 'SCORE_BAIXO';
+      const findInterestRate = await this.interestRateRepository.findRateLowScore(
+        { type, installments },
+      );
+
+      return findInterestRate;
+    }
+
+    return 1;
   }
 }
