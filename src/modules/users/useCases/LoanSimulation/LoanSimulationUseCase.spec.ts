@@ -90,4 +90,32 @@ describe('Loan Simulation', () => {
 
     expect(loanSimulation).toEqual(0.055);
   });
+
+  it('Should verify interest rates for an registered user with low score', async () => {
+    const { sut, registerAccountRepositoryStub } = makeSut();
+
+    const fakeAccount = {
+      email: 'any_email@mail.com',
+      cpf: '123456',
+      score: 500,
+      negative: false,
+      installments: 6,
+    };
+
+    jest
+      .spyOn(registerAccountRepositoryStub, 'findByEmail')
+      .mockReturnValueOnce(
+        new Promise(resolve =>
+          resolve({
+            ...fakeAccount,
+            name: 'any_name',
+            cellPhone: 9999,
+          }),
+        ),
+      );
+
+    const loanSimulation = await sut.execute(fakeAccount);
+
+    expect(loanSimulation).toEqual(0.055);
+  });
 });
