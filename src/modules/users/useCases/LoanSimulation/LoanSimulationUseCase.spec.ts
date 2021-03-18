@@ -74,4 +74,20 @@ describe('Loan Simulation', () => {
 
     await expect(loanSimulation).rejects.toBeInstanceOf(AppError);
   });
+
+  it('Should verify interest rates for an unregistered user', async () => {
+    const { sut } = makeSut();
+
+    const fakeAccount = {
+      email: 'any_email@mail.com',
+      cpf: '123456',
+      score: 0,
+      negative: false,
+      installments: 6,
+    };
+
+    const loanSimulation = await sut.execute(fakeAccount);
+
+    expect(loanSimulation).toEqual(0.055);
+  });
 });
