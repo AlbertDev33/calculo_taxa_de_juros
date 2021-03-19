@@ -2,6 +2,7 @@
 import axios from 'axios';
 
 import { AppError } from '../../../../shared/errors/AppError';
+import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
 import { InterestRateDTO } from '../../dtos/InterestRateDTO';
 import { IRegisterAccountDTO } from '../../dtos/IRegisterAccountDTO';
 import { Account } from '../../infra/typeorm/schema/Account';
@@ -189,12 +190,10 @@ describe('Loan Simulation', () => {
       value: 1000,
     };
 
-    mockedAxios.post.mockRejectedValue({ message: 'Netword Error' });
+    mockedAxios.post.mockRejectedValue({ message: 'Network Error' });
 
     const loanSimulation = sut.execute(fakeAccount);
 
-    await expect(loanSimulation).rejects.toThrow(
-      'Unexpected error when trying to communicate to Credito Express: Netword Error',
-    );
+    await expect(loanSimulation).rejects.toBeInstanceOf(ClientRequestError);
   });
 });

@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
 import { AppError } from '../../../../shared/errors/AppError';
+import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
 import { IInterestRateRepository } from '../../repositories/protocol/IInterestRateRepository';
 import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
 import { IRequest } from '../CreateUser/RegisterUseCase';
@@ -124,9 +125,7 @@ export class LoanSimulationUseCase {
 
       return response;
     } catch (err) {
-      throw new Error(
-        `Unexpected error when trying to communicate to Credito Express: ${err.message}`,
-      );
+      throw new ClientRequestError(err.message);
     }
   }
 }
