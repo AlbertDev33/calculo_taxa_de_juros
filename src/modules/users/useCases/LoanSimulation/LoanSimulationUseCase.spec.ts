@@ -63,6 +63,17 @@ const makeSut = (): ISutTypes => {
 jest.mock('axios');
 
 describe('Loan Simulation', () => {
+  const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+  const mockedReturnValueAxios = {
+    numeroParcelas: 12,
+    outrasTaxas: 85,
+    total: 1125.0,
+    valorJuros: 40.0,
+    valorParcela: 93.75,
+    valorSolicitado: 1000,
+  };
+
   it('Should throw if user is negative', async () => {
     const { sut } = makeSut();
 
@@ -91,29 +102,13 @@ describe('Loan Simulation', () => {
       value: 1000,
     };
 
-    jest.spyOn(axios, 'post').mockReturnValueOnce(
-      new Promise(resolve =>
-        resolve({
-          numeroParcelas: 12,
-          outrasTaxas: 85,
-          total: 1125.0,
-          valorJuros: 40.0,
-          valorParcela: 93.75,
-          valorSolicitado: 1000,
-        }),
-      ),
+    mockedAxios.post.mockReturnValueOnce(
+      new Promise(resolve => resolve(mockedReturnValueAxios)),
     );
 
     const loanSimulation = await sut.execute(fakeAccount);
 
-    expect(loanSimulation).toEqual({
-      numeroParcelas: 12,
-      outrasTaxas: 85,
-      total: 1125.0,
-      valorJuros: 40.0,
-      valorParcela: 93.75,
-      valorSolicitado: 1000,
-    });
+    expect(loanSimulation).toEqual(mockedReturnValueAxios);
   });
 
   it('Should returns fees from external api for an registered user with low score', async () => {
@@ -140,29 +135,13 @@ describe('Loan Simulation', () => {
         ),
       );
 
-    jest.spyOn(axios, 'post').mockReturnValueOnce(
-      new Promise(resolve =>
-        resolve({
-          numeroParcelas: 12,
-          outrasTaxas: 85,
-          total: 1125.0,
-          valorJuros: 40.0,
-          valorParcela: 93.75,
-          valorSolicitado: 1000,
-        }),
-      ),
+    mockedAxios.post.mockReturnValueOnce(
+      new Promise(resolve => resolve(mockedReturnValueAxios)),
     );
 
     const loanSimulation = await sut.execute(fakeAccount);
 
-    expect(loanSimulation).toEqual({
-      numeroParcelas: 12,
-      outrasTaxas: 85,
-      total: 1125.0,
-      valorJuros: 40.0,
-      valorParcela: 93.75,
-      valorSolicitado: 1000,
-    });
+    expect(loanSimulation).toEqual(mockedReturnValueAxios);
   });
 
   it('Should returns fees from external api for an registered user with hight score', async () => {
@@ -189,28 +168,12 @@ describe('Loan Simulation', () => {
         ),
       );
 
-    jest.spyOn(axios, 'post').mockReturnValueOnce(
-      new Promise(resolve =>
-        resolve({
-          numeroParcelas: 12,
-          outrasTaxas: 85,
-          total: 1125.0,
-          valorJuros: 40.0,
-          valorParcela: 93.75,
-          valorSolicitado: 1000,
-        }),
-      ),
+    mockedAxios.post.mockReturnValueOnce(
+      new Promise(resolve => resolve(mockedReturnValueAxios)),
     );
 
     const loanSimulation = await sut.execute(fakeAccount);
 
-    expect(loanSimulation).toEqual({
-      numeroParcelas: 12,
-      outrasTaxas: 85,
-      total: 1125.0,
-      valorJuros: 40.0,
-      valorParcela: 93.75,
-      valorSolicitado: 1000,
-    });
+    expect(loanSimulation).toEqual(mockedReturnValueAxios);
   });
 });
