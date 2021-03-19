@@ -1,3 +1,5 @@
+import axios, { AxiosResponse } from 'axios';
+
 import { AppError } from '../../../../shared/errors/AppError';
 import { IInterestRateRepository } from '../../repositories/protocol/IInterestRateRepository';
 import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
@@ -7,6 +9,7 @@ interface IRequest {
   cpf: string;
   score: number;
   installments: number;
+  value: number;
 }
 
 export class LoanSimulationUseCase {
@@ -21,7 +24,8 @@ export class LoanSimulationUseCase {
     cpf,
     score,
     installments,
-  }: IRequest): Promise<number> {
+    value,
+  }: IRequest): Promise<AxiosResponse<IRequest>> {
     const user = await this.registerAccountRepository.findByEmail(email);
 
     if (score < 0) {
@@ -34,23 +38,16 @@ export class LoanSimulationUseCase {
         { type, installments },
       );
 
-      return findInterestRate;
-    }
-
-    if (user.score <= 500) {
-      const type = 'SCORE_BAIXO';
-      const findInterestRate = await this.interestRateRepository.findRateLowScore(
-        { type, installments },
+      const response = await axios.post<IRequest>(
+        'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
+        {
+          numeroParcelas: installments,
+          valor: value,
+          taxaJuros: findInterestRate,
+        },
       );
 
-      return findInterestRate;
+      return response;
     }
-
-    const type = 'SCORE_ALTO';
-    const findInterestRate = await this.interestRateRepository.findRateHightScore(
-      { type, installments },
-    );
-
-    return findInterestRate;
   }
 }
