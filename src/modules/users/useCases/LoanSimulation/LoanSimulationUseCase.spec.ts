@@ -162,4 +162,53 @@ describe('Loan Simulation', () => {
       valorSolicitado: 1000,
     });
   });
+
+  it('Should returns rates from external api for an registered user with hight score', async () => {
+    const { sut, registerAccountRepositoryStub } = makeSut();
+
+    const fakeAccount = {
+      email: 'any_email@mail.com',
+      cpf: 'hashed_cpf',
+      score: 550,
+      negative: false,
+      installments: 6,
+      value: 1000,
+    };
+
+    jest
+      .spyOn(registerAccountRepositoryStub, 'findByEmail')
+      .mockReturnValueOnce(
+        new Promise(resolve =>
+          resolve({
+            ...fakeAccount,
+            name: 'any_name',
+            cellPhone: 9999,
+          }),
+        ),
+      );
+
+    jest.spyOn(axios, 'post').mockReturnValueOnce(
+      new Promise(resolve =>
+        resolve({
+          numeroParcelas: 12,
+          outrasTaxas: 85,
+          total: 1125.0,
+          valorJuros: 40.0,
+          valorParcela: 93.75,
+          valorSolicitado: 1000,
+        }),
+      ),
+    );
+
+    const loanSimulation = await sut.execute(fakeAccount);
+
+    expect(loanSimulation).toEqual({
+      numeroParcelas: 12,
+      outrasTaxas: 85,
+      total: 1125.0,
+      valorJuros: 40.0,
+      valorParcela: 93.75,
+      valorSolicitado: 1000,
+    });
+  });
 });
