@@ -67,5 +67,21 @@ export class LoanSimulationUseCase {
 
       return response;
     }
+
+    const type = 'SCORE_ALTO';
+    const findInterestRate = await this.interestRateRepository.findRateHightScore(
+      { type, installments },
+    );
+
+    const response = await axios.post<IRequest>(
+      'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
+      {
+        numeroParcelas: installments,
+        valor: value,
+        taxaJuros: findInterestRate,
+      },
+    );
+
+    return response;
   }
 }
