@@ -1,4 +1,6 @@
 /* eslint-disable max-classes-per-file */
+import axios, { AxiosResponse } from 'axios';
+
 import { AppError } from '../../../../shared/errors/AppError';
 import { InterestRateDTO } from '../../dtos/InterestRateDTO';
 import { IRegisterAccountDTO } from '../../dtos/IRegisterAccountDTO';
@@ -29,7 +31,7 @@ const makeRegisterAccountRepository = (): IRegisterAccountRepository => {
 const makeInterestRateRepository = (): IInterestRateRepository => {
   class InterestRateRepositoryStub implements IInterestRateRepository {
     findRateLowScore({ type, installments }: InterestRateDTO): Promise<number> {
-      return new Promise(resolve => resolve(0.055));
+      return new Promise(resolve => resolve(0.04));
     }
     findRateHightScore({
       type,
@@ -67,6 +69,7 @@ describe('Loan Simulation', () => {
       cpf: '123456',
       score: -1,
       installments: 6,
+      value: 1000,
     };
 
     const loanSimulation = sut.execute(fakeAccount);
@@ -83,66 +86,31 @@ describe('Loan Simulation', () => {
       score: 0,
       negative: false,
       installments: 6,
+      value: 1000,
     };
+
+    jest.spyOn(axios, 'post').mockReturnValueOnce(
+      new Promise(resolve =>
+        resolve({
+          numeroParcelas: 12,
+          outrasTaxas: 85,
+          total: 1125.0,
+          valorJuros: 40.0,
+          valorParcela: 93.75,
+          valorSolicitado: 1000,
+        }),
+      ),
+    );
 
     const loanSimulation = await sut.execute(fakeAccount);
 
-    expect(loanSimulation).toEqual(0.055);
-  });
-
-  it('Should verify interest rates for an registered user with low score', async () => {
-    const { sut, registerAccountRepositoryStub } = makeSut();
-
-    const fakeAccount = {
-      email: 'any_email@mail.com',
-      cpf: 'hashed_cpf',
-      score: 500,
-      negative: false,
-      installments: 6,
-    };
-
-    jest
-      .spyOn(registerAccountRepositoryStub, 'findByEmail')
-      .mockReturnValueOnce(
-        new Promise(resolve =>
-          resolve({
-            ...fakeAccount,
-            name: 'any_name',
-            cellPhone: 9999,
-          }),
-        ),
-      );
-
-    const loanSimulation = await sut.execute(fakeAccount);
-
-    expect(loanSimulation).toEqual(0.055);
-  });
-
-  it('Should verify interest rates for an registered user with low score', async () => {
-    const { sut, registerAccountRepositoryStub } = makeSut();
-
-    const fakeAccount = {
-      email: 'any_email@mail.com',
-      cpf: 'hashed_cpf',
-      score: 550,
-      negative: false,
-      installments: 6,
-    };
-
-    jest
-      .spyOn(registerAccountRepositoryStub, 'findByEmail')
-      .mockReturnValueOnce(
-        new Promise(resolve =>
-          resolve({
-            ...fakeAccount,
-            name: 'any_name',
-            cellPhone: 9999,
-          }),
-        ),
-      );
-
-    const loanSimulation = await sut.execute(fakeAccount);
-
-    expect(loanSimulation).toEqual(0.04);
+    expect(loanSimulation).toEqual({
+      numeroParcelas: 12,
+      outrasTaxas: 85,
+      total: 1125.0,
+      valorJuros: 40.0,
+      valorParcela: 93.75,
+      valorSolicitado: 1000,
+    });
   });
 });
