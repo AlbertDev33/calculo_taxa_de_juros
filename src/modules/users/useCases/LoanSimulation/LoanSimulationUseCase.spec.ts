@@ -176,4 +176,25 @@ describe('Loan Simulation', () => {
 
     expect(loanSimulation).toEqual(mockedReturnValueAxios);
   });
+
+  it('Should get a generic error from LoanSimulationUseCase service when the request fail before reaching the service', async () => {
+    const { sut } = makeSut();
+
+    const fakeAccount = {
+      email: 'any_email@mail.com',
+      cpf: 'hashed_cpf',
+      score: 550,
+      negative: false,
+      installments: 6,
+      value: 1000,
+    };
+
+    mockedAxios.post.mockRejectedValue({ message: 'Netword Error' });
+
+    const loanSimulation = sut.execute(fakeAccount);
+
+    await expect(loanSimulation).rejects.toThrow(
+      'Unexpected error when trying to communicate to Credito Express: Netword Error',
+    );
+  });
 });
