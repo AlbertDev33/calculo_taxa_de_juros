@@ -77,7 +77,7 @@ describe('Loan Simulation', () => {
     await expect(loanSimulation).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should returns rates from api for an unregistered user', async () => {
+  it('Should returns fees from api for an unregistered user', async () => {
     const { sut } = makeSut();
 
     const fakeAccount = {
@@ -114,7 +114,7 @@ describe('Loan Simulation', () => {
     });
   });
 
-  it('Should returns rates from external api for an registered user with low score', async () => {
+  it('Should returns fees from external api for an registered user with low score', async () => {
     const { sut, registerAccountRepositoryStub } = makeSut();
 
     const fakeAccount = {
@@ -163,7 +163,7 @@ describe('Loan Simulation', () => {
     });
   });
 
-  it('Should returns rates from external api for an registered user with hight score', async () => {
+  it('Should returns fees from external api for an registered user with hight score', async () => {
     const { sut, registerAccountRepositoryStub } = makeSut();
 
     const fakeAccount = {
