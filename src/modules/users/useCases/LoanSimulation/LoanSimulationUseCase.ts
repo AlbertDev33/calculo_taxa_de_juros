@@ -4,12 +4,23 @@ import { AppError } from '../../../../shared/errors/AppError';
 import { IInterestRateRepository } from '../../repositories/protocol/IInterestRateRepository';
 import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
 
+enum TypeScore {
+  SCORE_BAIXO = 'SCORE_BAIXO',
+  SCORE_ALTO = 'SCORE_ALTO',
+}
+
 interface IRequest {
   email: string;
   cpf: string;
   score: number;
   installments: number;
   value: number;
+}
+
+interface IExpressCreditSource {
+  installments: number;
+  value: number;
+  findInterestRate: number;
 }
 
 export class LoanSimulationUseCase {
@@ -19,9 +30,8 @@ export class LoanSimulationUseCase {
     private interestRateRepository: IInterestRateRepository,
   ) {}
 
-  async execute({
+  public async execute({
     email,
-    cpf,
     score,
     installments,
     value,
@@ -33,46 +43,67 @@ export class LoanSimulationUseCase {
     }
 
     if (!user.email) {
-      const type = 'SCORE_BAIXO';
-      const findInterestRate = await this.interestRateRepository.findRateLowScore(
-        { type, installments },
+      const type = TypeScore.SCORE_BAIXO;
+      const findInterestRate = await this.returnFeeToLowScore(
+        type,
+        installments,
       );
 
-      const response = await axios.post<IRequest>(
-        'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
-        {
-          numeroParcelas: installments,
-          valor: value,
-          taxaJuros: findInterestRate,
-        },
-      );
+      const response = await this.callApiCreditExpress({
+        installments,
+        value,
+        findInterestRate,
+      });
 
       return response;
     }
 
     if (user.score <= 500) {
-      const type = 'SCORE_BAIXO';
-      const findInterestRate = await this.interestRateRepository.findRateLowScore(
-        { type, installments },
+      const type = TypeScore.SCORE_BAIXO;
+      const findInterestRate = await this.returnFeeToLowScore(
+        type,
+        installments,
       );
 
-      const response = await axios.post<IRequest>(
-        'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
-        {
-          numeroParcelas: installments,
-          valor: value,
-          taxaJuros: findInterestRate,
-        },
-      );
+      const response = await this.callApiCreditExpress({
+        installments,
+        value,
+        findInterestRate,
+      });
 
       return response;
     }
 
-    const type = 'SCORE_ALTO';
+    const type = TypeScore.SCORE_ALTO;
     const findInterestRate = await this.interestRateRepository.findRateHightScore(
       { type, installments },
     );
 
+    const response = await this.callApiCreditExpress({
+      installments,
+      value,
+      findInterestRate,
+    });
+
+    return response;
+  }
+
+  private async returnFeeToLowScore(
+    type: string,
+    installments: number,
+  ): Promise<number> {
+    const findInterestRate = await this.interestRateRepository.findRateLowScore(
+      { type, installments },
+    );
+
+    return findInterestRate;
+  }
+
+  private async callApiCreditExpress({
+    installments,
+    value,
+    findInterestRate,
+  }: IExpressCreditSource): Promise<AxiosResponse<IRequest>> {
     const response = await axios.post<IRequest>(
       'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
       {
