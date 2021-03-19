@@ -60,6 +60,8 @@ const makeSut = (): ISutTypes => {
   };
 };
 
+jest.mock('axios');
+
 describe('Loan Simulation', () => {
   it('Should throw if user is negative', async () => {
     const { sut } = makeSut();

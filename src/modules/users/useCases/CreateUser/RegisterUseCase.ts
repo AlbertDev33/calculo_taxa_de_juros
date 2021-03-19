@@ -4,7 +4,7 @@ import { IHashProvider } from '../../../../shared/providers/HashProvider/protoco
 import { Account } from '../../infra/typeorm/schema/Account';
 import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
 
-interface IRequest {
+export interface IRequest {
   name: string;
   email: string;
   cpf: string;

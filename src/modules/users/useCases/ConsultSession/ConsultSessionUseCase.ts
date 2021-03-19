@@ -5,15 +5,21 @@ import { IHashProvider } from '../../../../shared/providers/HashProvider/protoco
 import { ITokenManagerProvider } from '../../../../shared/providers/TokenManager/protocol/ITokenManagerProvider';
 import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
 
-interface IRequest {
+interface IUserSessionSource {
   email: string;
   cpf: string;
   cellPhone: number;
   score: number;
 }
 
+interface ITokenGeneration
+  extends Omit<IUserSessionSource, 'email' | 'cellPhone'> {
+  userCpf: string;
+  negative: boolean;
+}
+
 interface IResponse {
-  user: IRequest;
+  user: IUserSessionSource;
   token: string;
 }
 
@@ -32,7 +38,7 @@ export class ConsultSessionUseCase {
     email,
     cpf,
     cellPhone,
-  }: IRequest): Promise<IResponse | IRequest> {
+  }: IUserSessionSource): Promise<IResponse> {
     const isValidCpf = this.cpfValidatorProvider.isValid(cpf);
 
     if (!isValidCpf) {
@@ -52,32 +58,32 @@ export class ConsultSessionUseCase {
         negative: false,
       };
 
-      const token = await this.generateToken(
+      const token = await this.generateToken({
         cpf,
-        tempAccount.cpf,
-        tempAccount.score,
-        tempAccount.negative,
-      );
+        userCpf: tempAccount.cpf,
+        score: tempAccount.score,
+        negative: tempAccount.negative,
+      });
 
       return { token, user: tempAccount };
     }
 
-    const token = await this.generateToken(
+    const token = await this.generateToken({
       cpf,
-      user.cpf,
-      user.score,
-      user.negative,
-    );
+      userCpf: user.cpf,
+      score: user.score,
+      negative: user.negative,
+    });
 
     return { token, user };
   }
 
-  private async generateToken(
-    cpf: string,
-    userCpf: string,
-    score: number,
-    negative: boolean,
-  ): Promise<string> {
+  private async generateToken({
+    cpf,
+    userCpf,
+    score,
+    negative,
+  }: ITokenGeneration): Promise<string> {
     const isValidCpf = await this.hashProvider.compareHash(cpf, userCpf);
 
     if (!isValidCpf) {

@@ -3,18 +3,26 @@ import axios, { AxiosResponse } from 'axios';
 import { AppError } from '../../../../shared/errors/AppError';
 import { IInterestRateRepository } from '../../repositories/protocol/IInterestRateRepository';
 import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
+import { IRequest } from '../CreateUser/RegisterUseCase';
 
 enum TypeScore {
   SCORE_BAIXO = 'SCORE_BAIXO',
   SCORE_ALTO = 'SCORE_ALTO',
 }
 
-interface IRequest {
-  email: string;
-  cpf: string;
+interface ILoanSimulationSource extends Omit<IRequest, 'name' | 'cellPhone'> {
   score: number;
   installments: number;
   value: number;
+}
+
+interface IResponse {
+  numeroParcelas: number;
+  outrasTaxas: number;
+  total: number;
+  valorJuros: number;
+  valorParcela: number;
+  valorSolicitado: number;
 }
 
 interface IExpressCreditSource {
@@ -35,7 +43,7 @@ export class LoanSimulationUseCase {
     score,
     installments,
     value,
-  }: IRequest): Promise<AxiosResponse<IRequest>> {
+  }: ILoanSimulationSource): Promise<AxiosResponse<IResponse>> {
     const user = await this.registerAccountRepository.findByEmail(email);
 
     if (score < 0) {
@@ -103,8 +111,8 @@ export class LoanSimulationUseCase {
     installments,
     value,
     findInterestRate,
-  }: IExpressCreditSource): Promise<AxiosResponse<IRequest>> {
-    const response = await axios.post<IRequest>(
+  }: IExpressCreditSource): Promise<AxiosResponse<IResponse>> {
+    const response = await axios.post<IResponse>(
       'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
       {
         numeroParcelas: installments,
