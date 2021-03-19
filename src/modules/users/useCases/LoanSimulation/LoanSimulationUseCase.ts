@@ -112,15 +112,21 @@ export class LoanSimulationUseCase {
     value,
     findInterestRate,
   }: IExpressCreditSource): Promise<AxiosResponse<IResponse>> {
-    const response = await axios.post<IResponse>(
-      'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
-      {
-        numeroParcelas: installments,
-        valor: value,
-        taxaJuros: findInterestRate,
-      },
-    );
+    try {
+      const response = await axios.post<IResponse>(
+        'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
+        {
+          numeroParcelas: installments,
+          valor: value,
+          taxaJuros: findInterestRate,
+        },
+      );
 
-    return response;
+      return response;
+    } catch (err) {
+      throw new Error(
+        `Unexpected error when trying to communicate to Credito Express: ${err.message}`,
+      );
+    }
   }
 }
