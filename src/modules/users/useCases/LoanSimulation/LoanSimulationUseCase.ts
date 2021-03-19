@@ -17,12 +17,12 @@ interface ILoanSimulationSource extends Omit<IRequest, 'name' | 'cellPhone'> {
 }
 
 interface IResponse {
-  numeroParcelas: number;
-  outrasTaxas: number;
-  total: number;
-  valorJuros: number;
-  valorParcela: number;
-  valorSolicitado: number;
+  readonly numeroParcelas: number;
+  readonly outrasTaxas: number;
+  readonly total: number;
+  readonly valorJuros: number;
+  readonly valorParcela: number;
+  readonly valorSolicitado: number;
 }
 
 interface IExpressCreditSource {
