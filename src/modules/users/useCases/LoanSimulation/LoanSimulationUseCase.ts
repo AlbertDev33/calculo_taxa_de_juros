@@ -49,5 +49,23 @@ export class LoanSimulationUseCase {
 
       return response;
     }
+
+    if (user.score <= 500) {
+      const type = 'SCORE_BAIXO';
+      const findInterestRate = await this.interestRateRepository.findRateLowScore(
+        { type, installments },
+      );
+
+      const response = await axios.post<IRequest>(
+        'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
+        {
+          numeroParcelas: installments,
+          valor: value,
+          taxaJuros: findInterestRate,
+        },
+      );
+
+      return response;
+    }
   }
 }
