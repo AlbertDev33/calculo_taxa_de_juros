@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
 import { AppError } from '../../../../shared/errors/AppError';
 import { InterestRateDTO } from '../../dtos/InterestRateDTO';
