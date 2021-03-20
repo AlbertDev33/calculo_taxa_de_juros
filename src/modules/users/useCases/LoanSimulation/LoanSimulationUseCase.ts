@@ -126,12 +126,18 @@ export class LoanSimulationUseCase {
       return response;
     } catch (err) {
       if (err.response && err.response.status) {
+        const installmentsNumbers = {
+          '6': 6,
+          '12': 12,
+          '18': 18,
+          '24': 24,
+          '36': 36,
+        };
         if (
-          installments !== 6 &&
-          installments !== 12 &&
-          installments !== 18 &&
-          installments !== 24 &&
-          installments !== 36
+          !Object.prototype.hasOwnProperty.call(
+            installmentsNumbers,
+            installments,
+          )
         ) {
           throw new AppError(`${err.response.data}`, err.response.status);
         }
