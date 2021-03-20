@@ -196,4 +196,28 @@ describe('Loan Simulation', () => {
 
     await expect(loanSimulation).rejects.toBeInstanceOf(ClientRequestError);
   });
+
+  it('Should get a message error from LoanSimulationUseCase service when the invalid installments number', async () => {
+    const { sut } = makeSut();
+
+    const fakeAccount = {
+      email: 'any_email@mail.com',
+      cpf: 'hashed_cpf',
+      score: 550,
+      negative: false,
+      installments: 16,
+      value: 1000,
+    };
+
+    mockedAxios.post.mockRejectedValue({
+      response: {
+        data: 'Número de parecelas é inválida',
+        status: 400,
+      },
+    });
+
+    const loanSimulation = sut.execute(fakeAccount);
+
+    await expect(loanSimulation).rejects.toBeInstanceOf(AppError);
+  });
 });
