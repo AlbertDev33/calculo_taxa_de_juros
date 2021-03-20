@@ -125,6 +125,18 @@ export class LoanSimulationUseCase {
 
       return response;
     } catch (err) {
+      if (err.response && err.response.status) {
+        if (
+          installments !== 6 &&
+          installments !== 12 &&
+          installments !== 18 &&
+          installments !== 24 &&
+          installments !== 36
+        ) {
+          throw new AppError(`${err.response.data}`, err.response.status);
+        }
+      }
+
       throw new ClientRequestError(err.message);
     }
   }
