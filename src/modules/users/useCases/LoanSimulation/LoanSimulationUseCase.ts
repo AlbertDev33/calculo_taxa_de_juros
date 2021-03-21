@@ -2,6 +2,8 @@ import axios, { AxiosResponse } from 'axios';
 
 import { AppError } from '../../../../shared/errors/AppError';
 import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
+import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
+import { IResponse } from '../../../../shared/providers/AxiosProvider/RequestProvider';
 import { IInterestRateRepository } from '../../repositories/protocol/IInterestRateRepository';
 import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
 import { IRequest } from '../CreateUser/RegisterUseCase';
@@ -17,7 +19,7 @@ interface ILoanSimulationSource extends Omit<IRequest, 'name' | 'cellPhone'> {
   value: number;
 }
 
-interface IResponse {
+export interface IResponseSource {
   readonly numeroParcelas: number;
   readonly outrasTaxas: number;
   readonly total: number;
@@ -37,6 +39,8 @@ export class LoanSimulationUseCase {
     private registerAccountRepository: IRegisterAccountRepository,
 
     private interestRateRepository: IInterestRateRepository,
+
+    private requestProvider: IRequestProvider,
   ) {}
 
   public async execute({
@@ -44,7 +48,7 @@ export class LoanSimulationUseCase {
     score,
     installments,
     value,
-  }: ILoanSimulationSource): Promise<AxiosResponse<IResponse>> {
+  }: ILoanSimulationSource): Promise<IResponse<IResponseSource>> {
     const user = await this.registerAccountRepository.findByEmail(email);
 
     if (score < 0) {
@@ -112,9 +116,9 @@ export class LoanSimulationUseCase {
     installments,
     value,
     findInterestRate,
-  }: IExpressCreditSource): Promise<AxiosResponse<IResponse>> {
+  }: IExpressCreditSource): Promise<IResponse<IResponseSource>> {
     try {
-      const response = await axios.post<IResponse>(
+      const response = await this.requestProvider.post<IResponseSource>(
         'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
         {
           numeroParcelas: installments,

@@ -1,8 +1,10 @@
 /* eslint-disable max-classes-per-file */
-import axios from 'axios';
-
 import { AppError } from '../../../../shared/errors/AppError';
-import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
+import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
+import {
+  IRequestConfig,
+  IResponse,
+} from '../../../../shared/providers/AxiosProvider/RequestProvider';
 import { InterestRateDTO } from '../../dtos/InterestRateDTO';
 import { IRegisterAccountDTO } from '../../dtos/IRegisterAccountDTO';
 import { Account } from '../../infra/typeorm/schema/Account';
@@ -14,7 +16,22 @@ interface ISutTypes {
   sut: LoanSimulationUseCase;
   registerAccountRepositoryStub: IRegisterAccountRepository;
   interestRateRepositoryStub: IInterestRateRepository;
+  requestProviderStub: IRequestProvider;
 }
+
+const makeRequestProvider = (): IRequestProvider => {
+  class RequestProviderStub implements IRequestProvider {
+    post<T>(
+      url: string,
+      data?: any,
+      config?: IRequestConfig,
+    ): Promise<IResponse<T>> {
+      return new Promise(resolve => resolve({ data } as IResponse));
+    }
+  }
+
+  return new RequestProviderStub();
+};
 
 const makeRegisterAccountRepository = (): IRegisterAccountRepository => {
   class RegisterAccountStub implements IRegisterAccountRepository {
@@ -48,24 +65,23 @@ const makeInterestRateRepository = (): IInterestRateRepository => {
 const makeSut = (): ISutTypes => {
   const registerAccountRepositoryStub = makeRegisterAccountRepository();
   const interestRateRepositoryStub = makeInterestRateRepository();
+  const requestProviderStub = makeRequestProvider();
 
   const sut = new LoanSimulationUseCase(
     registerAccountRepositoryStub,
     interestRateRepositoryStub,
+    requestProviderStub,
   );
 
   return {
     sut,
     registerAccountRepositoryStub,
     interestRateRepositoryStub,
+    requestProviderStub,
   };
 };
 
-jest.mock('axios');
-
 describe('Loan Simulation', () => {
-  const mockedAxios = axios as jest.Mocked<typeof axios>;
-
   const mockedReturnValueAxios = {
     numeroParcelas: 12,
     outrasTaxas: 85,
@@ -92,7 +108,7 @@ describe('Loan Simulation', () => {
   });
 
   it('Should returns fees from api for an unregistered user', async () => {
-    const { sut } = makeSut();
+    const { sut, requestProviderStub } = makeSut();
 
     const fakeAccount = {
       email: 'any_email@mail.com',
@@ -103,17 +119,25 @@ describe('Loan Simulation', () => {
       value: 1000,
     };
 
-    mockedAxios.post.mockReturnValueOnce(
-      new Promise(resolve => resolve(mockedReturnValueAxios)),
-    );
+    jest
+      .spyOn(requestProviderStub, 'post')
+      .mockReturnValueOnce(
+        new Promise(resolve =>
+          resolve({ data: mockedReturnValueAxios } as IResponse),
+        ),
+      );
 
     const loanSimulation = await sut.execute(fakeAccount);
 
-    expect(loanSimulation).toEqual(mockedReturnValueAxios);
+    expect(loanSimulation).toEqual({ data: mockedReturnValueAxios });
   });
 
   it('Should returns fees from external api for an registered user with low score', async () => {
-    const { sut, registerAccountRepositoryStub } = makeSut();
+    const {
+      sut,
+      registerAccountRepositoryStub,
+      requestProviderStub,
+    } = makeSut();
 
     const fakeAccount = {
       email: 'any_email@mail.com',
@@ -136,17 +160,25 @@ describe('Loan Simulation', () => {
         ),
       );
 
-    mockedAxios.post.mockReturnValueOnce(
-      new Promise(resolve => resolve(mockedReturnValueAxios)),
-    );
+    jest
+      .spyOn(requestProviderStub, 'post')
+      .mockReturnValueOnce(
+        new Promise(resolve =>
+          resolve({ data: mockedReturnValueAxios } as IResponse),
+        ),
+      );
 
     const loanSimulation = await sut.execute(fakeAccount);
 
-    expect(loanSimulation).toEqual(mockedReturnValueAxios);
+    expect(loanSimulation).toEqual({ data: mockedReturnValueAxios });
   });
 
   it('Should returns fees from external api for an registered user with hight score', async () => {
-    const { sut, registerAccountRepositoryStub } = makeSut();
+    const {
+      sut,
+      registerAccountRepositoryStub,
+      requestProviderStub,
+    } = makeSut();
 
     const fakeAccount = {
       email: 'any_email@mail.com',
@@ -169,17 +201,21 @@ describe('Loan Simulation', () => {
         ),
       );
 
-    mockedAxios.post.mockReturnValueOnce(
-      new Promise(resolve => resolve(mockedReturnValueAxios)),
-    );
+    jest
+      .spyOn(requestProviderStub, 'post')
+      .mockReturnValueOnce(
+        new Promise(resolve =>
+          resolve({ data: mockedReturnValueAxios } as IResponse),
+        ),
+      );
 
     const loanSimulation = await sut.execute(fakeAccount);
 
-    expect(loanSimulation).toEqual(mockedReturnValueAxios);
+    expect(loanSimulation).toEqual({ data: mockedReturnValueAxios });
   });
 
   it('Should get a generic error from LoanSimulationUseCase service when the request fail before reaching the service', async () => {
-    const { sut } = makeSut();
+    const { sut, requestProviderStub } = makeSut();
 
     const fakeAccount = {
       email: 'any_email@mail.com',
@@ -190,7 +226,9 @@ describe('Loan Simulation', () => {
       value: 1000,
     };
 
-    mockedAxios.post.mockRejectedValue({ message: 'Network Error' });
+    jest
+      .spyOn(requestProviderStub, 'post')
+      .mockRejectedValue({ message: 'Network Error' });
 
     const loanSimulation = sut.execute(fakeAccount);
 
@@ -200,7 +238,7 @@ describe('Loan Simulation', () => {
   });
 
   it('Should get a message error from LoanSimulationUseCase service when the invalid installments number', async () => {
-    const { sut } = makeSut();
+    const { sut, requestProviderStub } = makeSut();
 
     const fakeAccount = {
       email: 'any_email@mail.com',
@@ -211,7 +249,7 @@ describe('Loan Simulation', () => {
       value: 1000,
     };
 
-    mockedAxios.post.mockRejectedValue({
+    jest.spyOn(requestProviderStub, 'post').mockRejectedValue({
       response: {
         data: 'Número de parecelas é inválida',
         status: 400,
@@ -224,7 +262,7 @@ describe('Loan Simulation', () => {
   });
 
   it('Should return a message error from LoanSimulationUseCase service if any paramers are not informed', async () => {
-    const { sut } = makeSut();
+    const { sut, requestProviderStub } = makeSut();
 
     const fakeAccount = {
       email: 'any_email@mail.com',
@@ -235,7 +273,7 @@ describe('Loan Simulation', () => {
       value: 0,
     };
 
-    mockedAxios.post.mockRejectedValue({
+    jest.spyOn(requestProviderStub, 'post').mockRejectedValue({
       response: {
         data: 'Todos os parâmetros devem ser informados',
         status: 400,
