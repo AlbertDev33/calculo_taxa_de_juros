@@ -141,6 +141,10 @@ export class LoanSimulationUseCase {
         ) {
           throw new AppError(`${err.response.data}`, err.response.status);
         }
+
+        if (!installments || !value || !findInterestRate) {
+          throw new AppError(`${err.response.data}`, err.response.status);
+        }
       }
 
       throw new ClientRequestError(err.message);
