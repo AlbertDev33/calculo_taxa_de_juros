@@ -223,7 +223,7 @@ describe('Loan Simulation', () => {
     await expect(loanSimulation).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should return a message error from LoanSimulationUseCase service if all paramers are not informed', async () => {
+  it('Should return a message error from LoanSimulationUseCase service if any paramers are not informed', async () => {
     const { sut } = makeSut();
 
     const fakeAccount = {
