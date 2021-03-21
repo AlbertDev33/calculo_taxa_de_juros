@@ -7,9 +7,9 @@ export interface ISignOptions {
 export interface ITokenManagerProvider {
   sign(
     payload: string | object,
-    expiresIn: string,
+    secret: string,
     options?: ISignOptions,
   ): string;
 
-  verify(token: string): string;
+  verify(token: string, secret: string): string | object;
 }
