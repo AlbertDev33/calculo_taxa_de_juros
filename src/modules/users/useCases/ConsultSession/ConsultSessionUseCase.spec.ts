@@ -49,12 +49,12 @@ const makeTokenManager = (): ITokenManagerProvider => {
   class TokenManagerStub implements ITokenManagerProvider {
     sign(
       payload: string | object,
-      expiresIn: string,
+      secret: string,
       options?: ISignOptions,
     ): string {
       return 'generateToken';
     }
-    verify(token: string): string {
+    verify(token: string, secret: string): string | object {
       return token;
     }
   }
