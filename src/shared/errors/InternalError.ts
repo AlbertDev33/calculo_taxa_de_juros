@@ -1,9 +1,5 @@
-export class InternalError {
-  public readonly message: string;
-
-  public readonly statusCode: number;
-  constructor(message: string, statusCode = 500) {
-    this.message = message;
-    this.statusCode = statusCode;
+export class InternalError extends Error {
+  constructor(public message: string, protected statusCode = 500) {
+    super(message);
   }
 }
