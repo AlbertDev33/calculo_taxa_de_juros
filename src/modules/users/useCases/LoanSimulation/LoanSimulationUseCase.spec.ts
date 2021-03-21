@@ -194,7 +194,9 @@ describe('Loan Simulation', () => {
 
     const loanSimulation = sut.execute(fakeAccount);
 
-    await expect(loanSimulation).rejects.toBeInstanceOf(ClientRequestError);
+    await expect(loanSimulation).rejects.toThrow(
+      'Unexpected error when trying to communicate to Credito Express: Network Error',
+    );
   });
 
   it('Should get a message error from LoanSimulationUseCase service when the invalid installments number', async () => {
@@ -212,6 +214,30 @@ describe('Loan Simulation', () => {
     mockedAxios.post.mockRejectedValue({
       response: {
         data: 'Número de parecelas é inválida',
+        status: 400,
+      },
+    });
+
+    const loanSimulation = sut.execute(fakeAccount);
+
+    await expect(loanSimulation).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should return a message error from LoanSimulationUseCase service if all paramers are not informed', async () => {
+    const { sut } = makeSut();
+
+    const fakeAccount = {
+      email: 'any_email@mail.com',
+      cpf: 'hashed_cpf',
+      score: 550,
+      negative: false,
+      installments: 12,
+      value: 0,
+    };
+
+    mockedAxios.post.mockRejectedValue({
+      response: {
+        data: 'Todos os parâmetros devem ser informados',
         status: 400,
       },
     });
