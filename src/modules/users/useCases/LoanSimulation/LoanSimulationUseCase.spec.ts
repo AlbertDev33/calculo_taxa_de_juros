@@ -214,7 +214,7 @@ describe('Loan Simulation', () => {
     expect(loanSimulation).toEqual({ data: mockedReturnValueAxios });
   });
 
-  it('Should get a generic error from LoanSimulationUseCase service when the request fail before reaching the service', async () => {
+  it('Should return a generic error from LoanSimulationUseCase service when the request fail before reaching the service', async () => {
     const { sut, requestProviderStub } = makeSut();
 
     const fakeAccount = {
@@ -237,7 +237,7 @@ describe('Loan Simulation', () => {
     );
   });
 
-  it('Should get a message error from LoanSimulationUseCase service when the invalid installments number', async () => {
+  it('Should return a message error from LoanSimulationUseCase service when the invalid installments number', async () => {
     const { sut, requestProviderStub } = makeSut();
 
     const fakeAccount = {
@@ -261,7 +261,7 @@ describe('Loan Simulation', () => {
     await expect(loanSimulation).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should return a message error from LoanSimulationUseCase service if any paramers are not informed', async () => {
+  it('Should return a message error from LoanSimulationUseCase service if any parameters are not informed', async () => {
     const { sut, requestProviderStub } = makeSut();
 
     const fakeAccount = {
