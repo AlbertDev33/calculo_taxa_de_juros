@@ -1,5 +1,3 @@
-import axios, { AxiosResponse } from 'axios';
-
 import { AppError } from '../../../../shared/errors/AppError';
 import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
 import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
@@ -130,28 +128,43 @@ export class LoanSimulationUseCase {
       return response;
     } catch (err) {
       if (err.response && err.response.status) {
-        const installmentsNumbers = {
-          '6': 6,
-          '12': 12,
-          '18': 18,
-          '24': 24,
-          '36': 36,
-        };
-        if (
-          !Object.prototype.hasOwnProperty.call(
-            installmentsNumbers,
-            installments,
-          )
-        ) {
-          throw new AppError(`${err.response.data}`, err.response.status);
-        }
+        await this.returnErrorInvalidInstallments(err, installments);
 
-        if (!installments || !value || !findInterestRate) {
-          throw new AppError(`${err.response.data}`, err.response.status);
-        }
+        await this.returnErrorInvalidParameters(err, {
+          installments,
+          value,
+          findInterestRate,
+        });
       }
 
       throw new ClientRequestError(err.message);
+    }
+  }
+
+  private async returnErrorInvalidInstallments(
+    err: any,
+    installments: number,
+  ): Promise<void> {
+    const installmentsNumbers = {
+      '6': 6,
+      '12': 12,
+      '18': 18,
+      '24': 24,
+      '36': 36,
+    };
+    if (
+      !Object.prototype.hasOwnProperty.call(installmentsNumbers, installments)
+    ) {
+      throw new AppError(`${err.response.data}`, err.response.status);
+    }
+  }
+
+  private async returnErrorInvalidParameters(
+    err: any,
+    { installments, value, findInterestRate }: IExpressCreditSource,
+  ): Promise<void> {
+    if (!installments || !value || !findInterestRate) {
+      throw new AppError(`${err.response.data}`, err.response.status);
     }
   }
 }
