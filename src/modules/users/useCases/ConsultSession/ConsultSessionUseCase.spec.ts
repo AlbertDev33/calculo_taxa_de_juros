@@ -67,8 +67,8 @@ const makeRegisterAccountRepository = (): IRegisterAccountRepository => {
     create(account: IRegisterAccountDTO): Promise<Account> {
       return new Promise(resolve => resolve({ ...account, id: 'valid_id' }));
     }
-    findByEmail(email: string): Promise<Account> {
-      return new Promise(resolve => resolve({} as Account));
+    findByEmail(email: string): Promise<Account | undefined> {
+      return new Promise(resolve => resolve(undefined));
     }
   }
 
@@ -165,6 +165,7 @@ describe('CunsultUseCase', () => {
     const { sut, registerAccountRepositoryStub } = makeSut();
 
     const registered = {
+      id: 'valid_id',
       name: 'valid_name',
       email: 'any_email@mail.com',
       cpf: '123456',
@@ -182,6 +183,7 @@ describe('CunsultUseCase', () => {
     expect(registeredUserSession).toEqual({
       token: 'generateToken',
       user: {
+        id: 'valid_id',
         name: 'valid_name',
         email: 'any_email@mail.com',
         cpf: '123456',
