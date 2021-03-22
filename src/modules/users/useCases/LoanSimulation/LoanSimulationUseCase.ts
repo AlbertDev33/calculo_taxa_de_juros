@@ -1,5 +1,6 @@
 import { AppError } from '../../../../shared/errors/AppError';
 import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
+import { InternalError } from '../../../../shared/errors/InternalError';
 import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
 import { IResponse } from '../../../../shared/providers/AxiosProvider/RequestProvider';
 import { IInterestRateRepository } from '../../repositories/protocol/IInterestRateRepository';
@@ -53,12 +54,16 @@ export class LoanSimulationUseCase {
       throw new AppError('Low Score. Try again later!');
     }
 
-    if (!user.email) {
+    if (!user) {
       const type = TypeScore.SCORE_BAIXO;
       const findInterestRate = await this.returnFeeToLowScore(
         type,
         installments,
       );
+
+      if (!findInterestRate) {
+        throw new InternalError('Internal Error', 500);
+      }
 
       const response = await this.callApiCreditExpress({
         installments,
@@ -76,6 +81,10 @@ export class LoanSimulationUseCase {
         installments,
       );
 
+      if (!findInterestRate) {
+        throw new InternalError('Internal Error', 500);
+      }
+
       const response = await this.callApiCreditExpress({
         installments,
         value,
@@ -90,6 +99,10 @@ export class LoanSimulationUseCase {
       { type, installments },
     );
 
+    if (!findInterestRate) {
+      throw new InternalError('Internal Error', 500);
+    }
+
     const response = await this.callApiCreditExpress({
       installments,
       value,
@@ -102,7 +115,7 @@ export class LoanSimulationUseCase {
   private async returnFeeToLowScore(
     type: string,
     installments: number,
-  ): Promise<number> {
+  ): Promise<number | undefined> {
     const findInterestRate = await this.interestRateRepository.findRateLowScore(
       { type, installments },
     );
