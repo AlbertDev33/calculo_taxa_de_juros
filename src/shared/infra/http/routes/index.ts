@@ -1,3 +1,7 @@
 import { Router } from 'express';
 
-export const routes = Router();
+import { registerRouter } from '../../../../modules/users/routes/register.routes';
+
+export const router = Router();
+
+router.use('/register', registerRouter);
