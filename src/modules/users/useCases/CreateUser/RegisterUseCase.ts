@@ -3,6 +3,7 @@ import { ICpfValidatorProvider } from '../../../../shared/providers/CpfValidator
 import { IHashProvider } from '../../../../shared/providers/HashProvider/protocol/IHashProvider';
 import { Account } from '../../infra/typeorm/schema/Account';
 import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
+import { IRegisterUseCase } from './model/IRegisterUseCase';
 
 export interface IRequest {
   name: string;
@@ -11,7 +12,7 @@ export interface IRequest {
   cellPhone: number;
 }
 
-export class RegisterUseCase {
+export class RegisterUseCase implements IRegisterUseCase {
   constructor(
     private registerAccountRepository: IRegisterAccountRepository,
 
@@ -29,16 +30,8 @@ export class RegisterUseCase {
 
     const user = await this.registerAccountRepository.findByEmail(email);
 
-    if (user.email) {
+    if (user) {
       throw new AppError('Email already in use!');
-    }
-
-    const cpfMatched = await this.hashProvider.compareHash(cpf, user.cpf);
-
-    if (cpfMatched) {
-      throw new AppError(
-        'Invalid CPF. Verify if already exist a register with this CPF',
-      );
     }
 
     const hashedCpf = await this.hashProvider.generateHash(cpf);
@@ -48,7 +41,7 @@ export class RegisterUseCase {
       email,
       cpf: hashedCpf,
       cellPhone,
-      score: 500,
+      score: 550,
       negative: false,
     });
 

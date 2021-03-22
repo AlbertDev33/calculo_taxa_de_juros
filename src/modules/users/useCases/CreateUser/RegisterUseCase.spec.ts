@@ -44,11 +44,21 @@ const makeHash = (): IHashProvider => {
 const makeRegisterAccountRepository = (): IRegisterAccountRepository => {
   class RegisterAccountStub {
     async create(account: IRegisterAccountDTO): Promise<Account> {
-      return new Promise(resolve => resolve({ ...account, id: 'valid_id' }));
+      const fakeRegister = {
+        id: 'valid_id',
+        name: 'valid_name',
+        email: 'any_email@mail.com',
+        cpf: '123456',
+        cellPhone: 999999,
+        score: 550,
+        negative: false,
+      };
+
+      return fakeRegister;
     }
 
     async findByEmail(email: string): Promise<Account | undefined> {
-      return new Promise(resolve => resolve({} as Account));
+      return new Promise(resolve => resolve(undefined));
     }
   }
   return new RegisterAccountStub();
@@ -75,28 +85,16 @@ const makeSut = (): ISutTypes => {
 
 describe('Create User', () => {
   it('Should be able to register with valid values', async () => {
-    const {
-      sut,
-      cpfValidatorStub,
-      bcrypHashProviderStub,
-      registerAccountRepositoryStub,
-    } = makeSut();
-
-    const isValidCpfSpy = jest.spyOn(cpfValidatorStub, 'isValid');
+    const { sut, cpfValidatorStub, registerAccountRepositoryStub } = makeSut();
 
     const fakeRegister = {
       name: 'valid_name',
       email: 'any_email@mail.com',
       cpf: '123456',
       cellPhone: 999999,
-      score: 500,
-      negative: false,
     };
 
-    jest
-      .spyOn(bcrypHashProviderStub, 'compareHash')
-      .mockReturnValueOnce(new Promise(resolve => resolve(false)));
-
+    const isValidCpfSpy = jest.spyOn(cpfValidatorStub, 'isValid');
     const repositorySpy = jest.spyOn(registerAccountRepositoryStub, 'create');
 
     await sut.execute(fakeRegister);
@@ -107,8 +105,8 @@ describe('Create User', () => {
       email: 'any_email@mail.com',
       cpf: 'hashed_value',
       cellPhone: 999999,
-      score: 500,
       negative: false,
+      score: 550,
     });
   });
 
@@ -134,29 +132,11 @@ describe('Create User', () => {
     await expect(register).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should not be able to register with a cpf that already exists', async () => {
-    const { sut, bcrypHashProviderStub } = makeSut();
-
-    const duplicateFakeRegister = {
-      name: 'valid_name',
-      email: 'any_email@mail.com',
-      cpf: '1234567',
-      cellPhone: 999999,
-      score: 500,
-      negative: false,
-    };
-
-    jest.spyOn(bcrypHashProviderStub, 'compareHash');
-
-    const account = sut.execute(duplicateFakeRegister);
-
-    await expect(account).rejects.toBeInstanceOf(AppError);
-  });
-
   it('Should not be able to register with a email that already exists', async () => {
     const { sut, registerAccountRepositoryStub } = makeSut();
 
     const fakeAccount = {
+      id: 'valid_id',
       name: 'valid_name',
       email: 'any_email@mail.com',
       cpf: '1234567',
