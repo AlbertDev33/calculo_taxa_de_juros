@@ -47,7 +47,7 @@ export class ConsultSessionUseCase {
 
     const user = await this.registerAccountRepository.findByEmail(email);
 
-    if (!user.email) {
+    if (!user) {
       const hashedCpf = await this.hashProvider.generateHash(cpf);
 
       const tempAccount = {
