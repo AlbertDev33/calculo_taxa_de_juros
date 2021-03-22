@@ -1,15 +1,25 @@
-import { v4 as uuidv4 } from 'uuid';
+import {
+  Entity,
+  ObjectIdColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
+@Entity('rates')
 export class Rate {
-  id?: string;
+  @ObjectIdColumn()
+  id: string;
 
+  @Column()
   type: string;
 
+  @Column()
   installments: number;
 
-  constructor() {
-    if (!this.id) {
-      this.id = uuidv4();
-    }
-  }
+  @CreateDateColumn()
+  created_at?: Date;
+
+  @UpdateDateColumn()
+  updated_at?: Date;
 }
