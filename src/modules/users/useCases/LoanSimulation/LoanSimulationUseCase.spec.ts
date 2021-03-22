@@ -1,5 +1,7 @@
 /* eslint-disable max-classes-per-file */
+
 import { AppError } from '../../../../shared/errors/AppError';
+import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
 import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
 import {
   IRequestConfig,
@@ -285,5 +287,30 @@ describe('Loan Simulation', () => {
     const loanSimulation = sut.execute(fakeAccount);
 
     await expect(loanSimulation).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should return a message error from LoanSimulationUseCase service if findInterestRate parameter are not returned', async () => {
+    const { sut, interestRateRepositoryStub } = makeSut();
+
+    const fakeAccount = {
+      email: 'any_email@mail.com',
+      cpf: 'hashed_cpf',
+      score: 550,
+      negative: false,
+      installments: 12,
+      value: 0,
+    };
+
+    jest
+      .spyOn(interestRateRepositoryStub, 'findRateHightScore')
+      .mockReturnValueOnce(new Promise(resolve => resolve(undefined)));
+
+    jest
+      .spyOn(interestRateRepositoryStub, 'findRateLowScore')
+      .mockReturnValueOnce(new Promise(resolve => resolve(undefined)));
+
+    const loanSimulation = sut.execute(fakeAccount);
+
+    await expect(loanSimulation).rejects.toThrow('Internal Error');
   });
 });
