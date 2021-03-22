@@ -16,7 +16,9 @@ export class InterestRateToUnregisteredUserRepository
     type,
     installments,
   }: InterestRateDTO): Promise<number | undefined> {
-    const findRates = await this.ormRepository.findOne({ type, installments });
+    const findRates = await this.ormRepository.findOne({
+      where: { type, installments },
+    });
 
     return findRates?.installments;
   }
@@ -25,7 +27,9 @@ export class InterestRateToUnregisteredUserRepository
     type,
     installments,
   }: InterestRateDTO): Promise<number | undefined> {
-    const findRates = await this.ormRepository.findOne({ type, installments });
+    const findRates = await this.ormRepository.findOne({
+      where: { type, installments },
+    });
 
     return findRates?.installments;
   }
