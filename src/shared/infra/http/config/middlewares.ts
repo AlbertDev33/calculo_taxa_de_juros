@@ -1,25 +1,25 @@
 import cors from 'cors';
 import express, { Express, Request, Response, NextFunction } from 'express';
+import 'express-async-errors';
 
 import { AppError } from '../../../errors/AppError';
 import { ClientRequestError } from '../../../errors/ClientRequestError';
-import { routes } from '../routes';
+import { InternalError } from '../../../errors/InternalError';
+import { router } from '../routes';
 
 export default (app: Express): void => {
   app.use(cors({ origin: '*' }));
   app.use(express.json());
-  app.use(routes);
+  app.use(router);
 
   app.use(
-    async (err: Error, _: Request, response: Response, __: NextFunction) => {
+    async (err: Error, _: Request, response: Response, next: NextFunction) => {
       if (err instanceof AppError) {
         return response.status(err.statusCode).json({
           status: 'error',
           message: err.message,
         });
       }
-
-      console.error(err);
 
       if (err instanceof ClientRequestError) {
         return response.status(err.statusCode).json({
@@ -28,10 +28,9 @@ export default (app: Express): void => {
         });
       }
 
-      return response.status(500).json({
-        status: 'error',
-        message: 'Internal Server Error',
-      });
+      console.log(err);
+
+      return new InternalError(err.message);
     },
   );
 };
