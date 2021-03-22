@@ -1,7 +1,7 @@
 import { MongoRepository, getMongoRepository } from 'typeorm';
 
-import { InterestRateDTO } from '../../dtos/InterestRateDTO';
-import { Rate } from '../../infra/typeorm/schema/Rate';
+import { InterestRateDTO } from '../../../../dtos/InterestRateDTO';
+import { Rate } from '../../schema/Rate';
 import { IInterestRateRepository } from '../protocol/IInterestRateRepository';
 
 export class InterestRateToUnregisteredUserRepository

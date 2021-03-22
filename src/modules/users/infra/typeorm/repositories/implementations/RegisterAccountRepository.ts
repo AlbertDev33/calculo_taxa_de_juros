@@ -1,7 +1,7 @@
 import { MongoRepository, getMongoRepository } from 'typeorm';
 
-import { IRegisterAccountDTO } from '../../dtos/IRegisterAccountDTO';
-import { Account } from '../../infra/typeorm/schema/Account';
+import { IRegisterAccountDTO } from '../../../../dtos/IRegisterAccountDTO';
+import { Account } from '../../schema/Account';
 import { IRegisterAccountRepository } from '../protocol/IRegisterAccountRepository';
 
 export class RegisterAccountRepository implements IRegisterAccountRepository {
