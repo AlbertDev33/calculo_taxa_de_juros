@@ -1,7 +1,7 @@
 import { CpfValidatorProvider } from '../../../../shared/providers/CpfValidator/CpfValidatorProvider';
 import { BCryptHashProvider } from '../../../../shared/providers/HashProvider/BCryptHashProvider';
 import { RegisterController } from '../../infra/http/controllers/RegisterController';
-import { RegisterAccountRepository } from '../../repositories/implementations/RegisterAccountRepository';
+import { RegisterAccountRepository } from '../../infra/typeorm/repositories/implementations/RegisterAccountRepository';
 import { RegisterUseCase } from './RegisterUseCase';
 
 export const makeRegisterController = (): RegisterController => {

@@ -3,8 +3,8 @@ import { ClientRequestError } from '../../../../shared/errors/ClientRequestError
 import { InternalError } from '../../../../shared/errors/InternalError';
 import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
 import { IResponse } from '../../../../shared/providers/AxiosProvider/RequestProvider';
-import { IInterestRateRepository } from '../../repositories/protocol/IInterestRateRepository';
-import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
+import { IInterestRateRepository } from '../../infra/typeorm/repositories/protocol/IInterestRateRepository';
+import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
 import { IRequest } from '../CreateUser/RegisterUseCase';
 
 enum TypeScore {

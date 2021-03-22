@@ -3,7 +3,7 @@ import { AppError } from '../../../../shared/errors/AppError';
 import { ICpfValidatorProvider } from '../../../../shared/providers/CpfValidator/protocol/ICpfValidatorProvider';
 import { IHashProvider } from '../../../../shared/providers/HashProvider/protocol/IHashProvider';
 import { ITokenManagerProvider } from '../../../../shared/providers/TokenManager/protocol/ITokenManagerProvider';
-import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
+import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
 
 interface IUserSessionSource {
   email: string;

@@ -1,7 +1,6 @@
 /* eslint-disable max-classes-per-file */
 
 import { AppError } from '../../../../shared/errors/AppError';
-import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
 import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
 import {
   IRequestConfig,
@@ -9,9 +8,9 @@ import {
 } from '../../../../shared/providers/AxiosProvider/RequestProvider';
 import { InterestRateDTO } from '../../dtos/InterestRateDTO';
 import { IRegisterAccountDTO } from '../../dtos/IRegisterAccountDTO';
+import { IInterestRateRepository } from '../../infra/typeorm/repositories/protocol/IInterestRateRepository';
+import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
 import { Account } from '../../infra/typeorm/schema/Account';
-import { IInterestRateRepository } from '../../repositories/protocol/IInterestRateRepository';
-import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
 import { LoanSimulationUseCase } from './LoanSimulationUseCase';
 
 interface ISutTypes {

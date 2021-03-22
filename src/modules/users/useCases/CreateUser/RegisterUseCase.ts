@@ -1,8 +1,8 @@
 import { AppError } from '../../../../shared/errors/AppError';
 import { ICpfValidatorProvider } from '../../../../shared/providers/CpfValidator/protocol/ICpfValidatorProvider';
 import { IHashProvider } from '../../../../shared/providers/HashProvider/protocol/IHashProvider';
+import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
 import { Account } from '../../infra/typeorm/schema/Account';
-import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
 import { IRegisterUseCase } from './model/IRegisterUseCase';
 
 export interface IRequest {

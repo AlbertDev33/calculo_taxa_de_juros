@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-param-reassign */
 /* eslint-disable max-classes-per-file */
 import { AppError } from '../../../../shared/errors/AppError';
@@ -8,8 +9,8 @@ import {
   ITokenManagerProvider,
 } from '../../../../shared/providers/TokenManager/protocol/ITokenManagerProvider';
 import { IRegisterAccountDTO } from '../../dtos/IRegisterAccountDTO';
+import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
 import { Account } from '../../infra/typeorm/schema/Account';
-import { IRegisterAccountRepository } from '../../repositories/protocol/IRegisterAccountRepository';
 import { ConsultSessionUseCase } from './ConsultSessionUseCase';
 
 interface ISutTypes {
