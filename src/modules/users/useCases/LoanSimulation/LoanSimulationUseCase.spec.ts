@@ -38,8 +38,8 @@ const makeRegisterAccountRepository = (): IRegisterAccountRepository => {
     create(account: IRegisterAccountDTO): Promise<Account> {
       return new Promise(resolve => resolve({ ...account, id: 'valid_id' }));
     }
-    findByEmail(email: string): Promise<Account> {
-      return new Promise(resolve => resolve({} as Account));
+    findByEmail(email: string): Promise<Account | undefined> {
+      return new Promise(resolve => resolve(undefined));
     }
   }
 
@@ -154,6 +154,7 @@ describe('Loan Simulation', () => {
         new Promise(resolve =>
           resolve({
             ...fakeAccount,
+            id: 'valid_id',
             name: 'any_name',
             cellPhone: 9999,
           }),
@@ -195,6 +196,7 @@ describe('Loan Simulation', () => {
         new Promise(resolve =>
           resolve({
             ...fakeAccount,
+            id: 'valid_id',
             name: 'any_name',
             cellPhone: 9999,
           }),
