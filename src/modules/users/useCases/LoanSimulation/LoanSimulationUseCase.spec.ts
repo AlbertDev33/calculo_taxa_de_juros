@@ -6,11 +6,13 @@ import {
   IRequestConfig,
   IResponse,
 } from '../../../../shared/providers/AxiosProvider/RequestProvider';
+import { ICreateInstallmentsDTO } from '../../dtos/ICreateInstallmentsDTO';
 import { InterestRateDTO } from '../../dtos/InterestRateDTO';
 import { IRegisterAccountDTO } from '../../dtos/IRegisterAccountDTO';
 import { IInterestRateRepository } from '../../infra/typeorm/repositories/protocol/IInterestRateRepository';
 import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
 import { Account } from '../../infra/typeorm/schema/Account';
+import { Rate } from '../../infra/typeorm/schema/Rate';
 import { LoanSimulationUseCase } from './LoanSimulationUseCase';
 
 interface ISutTypes {
@@ -36,6 +38,21 @@ const makeRequestProvider = (): IRequestProvider => {
 
 const makeRegisterAccountRepository = (): IRegisterAccountRepository => {
   class RegisterAccountStub implements IRegisterAccountRepository {
+    findByCpf(cpf: string): Promise<Account> {
+      const fakeAccount = {
+        id: 'valid_id',
+        name: 'John Doe',
+        email: 'any_email@mail.com',
+        cpf: 'hashed_cpf',
+        cellPhone: 555555,
+        score: 0,
+        negative: false,
+        installments: 6,
+        value: 1000,
+      };
+
+      return new Promise(resolve => resolve(fakeAccount));
+    }
     create(account: IRegisterAccountDTO): Promise<Account> {
       return new Promise(resolve => resolve({ ...account, id: 'valid_id' }));
     }
@@ -49,14 +66,30 @@ const makeRegisterAccountRepository = (): IRegisterAccountRepository => {
 
 const makeInterestRateRepository = (): IInterestRateRepository => {
   class InterestRateRepositoryStub implements IInterestRateRepository {
-    findRateLowScore({ type, installments }: InterestRateDTO): Promise<number> {
-      return new Promise(resolve => resolve(0.04));
+    create(data: ICreateInstallmentsDTO): Promise<Rate> {
+      return new Promise(resolve => resolve({} as Rate));
     }
-    findRateHightScore({
-      type,
-      installments,
-    }: InterestRateDTO): Promise<number> {
-      return new Promise(resolve => resolve(0.04));
+    findRateLowScore({ type, installments }: InterestRateDTO): Promise<Rate> {
+      return new Promise(resolve =>
+        resolve({
+          seis: 0.04,
+          doze: 0.045,
+          dezoito: 0.05,
+          vinteEquatro: 0.053,
+          trintaEseis: 0.055,
+        } as Rate),
+      );
+    }
+    findRateHightScore({ type, installments }: InterestRateDTO): Promise<Rate> {
+      return new Promise(resolve =>
+        resolve({
+          seis: 0.04,
+          doze: 0.045,
+          dezoito: 0.05,
+          vinteEquatro: 0.053,
+          trintaEseis: 0.055,
+        } as Rate),
+      );
     }
   }
 
