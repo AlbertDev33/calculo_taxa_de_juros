@@ -26,6 +26,19 @@ export class RatesRegistrationUseCase implements IRatesRegistrationUseCase {
       throw new AppError('Invalid Type Description!');
     }
 
+    const installmentsNumbers = {
+      '6': 6,
+      '12': 12,
+      '18': 18,
+      '24': 24,
+      '36': 36,
+    };
+    if (
+      !Object.prototype.hasOwnProperty.call(installmentsNumbers, installments)
+    ) {
+      throw new AppError('Invalid Installments value!');
+    }
+
     const rates = await this.interasteRateRepository.create({
       type,
       installments,
