@@ -15,19 +15,10 @@ export class Rate {
   type: string;
 
   @Column()
-  seis: number;
+  installments: number;
 
   @Column()
-  doze: number;
-
-  @Column()
-  dezoito: number;
-
-  @Column()
-  vinteEquatro: number;
-
-  @Column()
-  trintaEseis: number;
+  rate: number;
 
   @CreateDateColumn()
   created_at?: Date;
