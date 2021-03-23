@@ -13,13 +13,7 @@ interface ISutTypes {
 const makeInterestRateRepository = (): IInterestRateRepository => {
   class InterestRateRepositoryStub implements IInterestRateRepository {
     create(data: ICreateInstallmentsDTO): Promise<Rate> {
-      return new Promise(resolve =>
-        resolve({
-          type: 'fake_type',
-          installments: 6,
-          rate: 0.04,
-        } as Rate),
-      );
+      return new Promise(resolve => resolve({} as Rate));
     }
     findRateLowScore({ type, installments }: InterestRateDTO): Promise<Rate> {
       return new Promise(resolve => resolve({} as Rate));
@@ -44,23 +38,31 @@ const makeSut = (): ISutTypes => {
 };
 
 describe('Installments Registration', () => {
-  it('Should be able to register rates', async () => {
-    const { sut } = makeSut();
+  it('Should be able to create rates', async () => {
+    const { sut, interestRateRepositoryStub } = makeSut();
 
     const fakeRates = {
-      type: 'fake_type',
+      type: 'SCORE_BAIXO',
       installments: 6,
       rate: 0.04,
     };
 
-    const rate = { ...fakeRates, type: 'SCORE_BAIXO' };
+    jest.spyOn(interestRateRepositoryStub, 'create').mockReturnValueOnce(
+      new Promise(resolve =>
+        resolve({
+          type: 'SCORE_BAIXO',
+          installments: 6,
+          rate: 0.04,
+        } as Rate),
+      ),
+    );
 
-    const response = await sut.execute(rate);
+    const response = await sut.execute(fakeRates);
 
     expect(response).toEqual(fakeRates);
   });
 
-  it('Should not be able to register rates with different type than SCORE_BAIXO or SCORE_ALTO', async () => {
+  it('Should not be able to create rates with different type than SCORE_BAIXO or SCORE_ALTO', async () => {
     const { sut } = makeSut();
 
     const fakeRates = {
@@ -75,7 +77,7 @@ describe('Installments Registration', () => {
     await expect(response).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should not be able to register rates with invalid installments', async () => {
+  it('Should not be able to create rates with invalid installments', async () => {
     const { sut, interestRateRepositoryStub } = makeSut();
 
     const fakeRates = {
@@ -94,6 +96,33 @@ describe('Installments Registration', () => {
         } as Rate),
       ),
     );
+
+    const response = sut.execute(fakeRates);
+
+    await expect(response).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should not be able to create an LowScore data that already exists', async () => {
+    const { sut, interestRateRepositoryStub } = makeSut();
+
+    const fakeRates = {
+      id: 'valid_id',
+      type: 'SCORE_BAIXO',
+      installments: 6,
+      rate: 0.04,
+    };
+
+    jest
+      .spyOn(interestRateRepositoryStub, 'findRateLowScore')
+      .mockReturnValueOnce(
+        new Promise(resolve =>
+          resolve({
+            type: 'SCORE_BAIXO',
+            installments: 6,
+            rate: 0.04,
+          } as Rate),
+        ),
+      );
 
     const response = sut.execute(fakeRates);
 
