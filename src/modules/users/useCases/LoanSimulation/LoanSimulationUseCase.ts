@@ -5,14 +5,17 @@ import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/pro
 import { IResponse } from '../../../../shared/providers/AxiosProvider/RequestProvider';
 import { IInterestRateRepository } from '../../infra/typeorm/repositories/protocol/IInterestRateRepository';
 import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
+import { Rate } from '../../infra/typeorm/schema/Rate';
 import { IRequest } from '../CreateUser/RegisterUseCase';
+import { ILoanSimulationUseCase } from './model/ILoanSimulationUseCase';
 
 enum TypeScore {
   SCORE_BAIXO = 'SCORE_BAIXO',
   SCORE_ALTO = 'SCORE_ALTO',
 }
 
-interface ILoanSimulationSource extends Omit<IRequest, 'name' | 'cellPhone'> {
+export interface ILoanSimulationSource
+  extends Omit<IRequest, 'name' | 'cellPhone' | 'cpf'> {
   score: number;
   installments: number;
   value: number;
@@ -30,10 +33,10 @@ export interface IResponseSource {
 interface IExpressCreditSource {
   installments: number;
   value: number;
-  findInterestRate: number;
+  findInterestRate: Rate;
 }
 
-export class LoanSimulationUseCase {
+export class LoanSimulationUseCase implements ILoanSimulationUseCase {
   constructor(
     private registerAccountRepository: IRegisterAccountRepository,
 
@@ -115,7 +118,7 @@ export class LoanSimulationUseCase {
   private async returnFeeToLowScore(
     type: string,
     installments: number,
-  ): Promise<number | undefined> {
+  ): Promise<Rate | undefined> {
     const findInterestRate = await this.interestRateRepository.findRateLowScore(
       { type, installments },
     );
