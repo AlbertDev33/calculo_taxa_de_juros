@@ -43,6 +43,22 @@ const makeHash = (): IHashProvider => {
 
 const makeRegisterAccountRepository = (): IRegisterAccountRepository => {
   class RegisterAccountStub {
+    async findByCpf(cpf: string): Promise<Account> {
+      const fakeAccount = {
+        id: 'valid_id',
+        name: 'John Doe',
+        email: 'any_email@mail.com',
+        cpf: 'hashed_cpf',
+        cellPhone: 555555,
+        score: 0,
+        negative: false,
+        installments: 6,
+        value: 1000,
+      };
+
+      return new Promise(resolve => resolve(fakeAccount));
+    }
+
     async create(account: IRegisterAccountDTO): Promise<Account> {
       const fakeRegister = {
         id: 'valid_id',

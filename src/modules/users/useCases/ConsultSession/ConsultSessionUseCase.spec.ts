@@ -71,6 +71,22 @@ const makeRegisterAccountRepository = (): IRegisterAccountRepository => {
     findByEmail(email: string): Promise<Account | undefined> {
       return new Promise(resolve => resolve(undefined));
     }
+
+    findByCpf(cpf: string): Promise<Account> {
+      const fakeAccount = {
+        id: 'valid_id',
+        name: 'John Doe',
+        email: 'any_email@mail.com',
+        cpf: 'hashed_cpf',
+        cellPhone: 555555,
+        score: 0,
+        negative: false,
+        installments: 6,
+        value: 1000,
+      };
+
+      return new Promise(resolve => resolve(fakeAccount));
+    }
   }
 
   return new RegisterAccountStub();
@@ -83,8 +99,8 @@ const makeSut = (): ISutTypes => {
   const tokenManager = makeTokenManager();
 
   const sut = new ConsultSessionUseCase(
-    cpfValidatorStub,
     registerAccountRepositoryStub,
+    cpfValidatorStub,
     hashProviderStub,
     tokenManager,
   );
