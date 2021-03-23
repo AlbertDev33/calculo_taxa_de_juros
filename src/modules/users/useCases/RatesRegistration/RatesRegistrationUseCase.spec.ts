@@ -74,4 +74,29 @@ describe('Installments Registration', () => {
 
     await expect(response).rejects.toBeInstanceOf(AppError);
   });
+
+  it('Should not be able to register rates with invalid installments', async () => {
+    const { sut, interestRateRepositoryStub } = makeSut();
+
+    const fakeRates = {
+      id: 'valid_id',
+      type: 'SCORE_BAIXO',
+      installments: 10,
+      rate: 0.04,
+    };
+
+    jest.spyOn(interestRateRepositoryStub, 'create').mockReturnValueOnce(
+      new Promise(resolve =>
+        resolve({
+          type: 'SCORE_BAIXO',
+          installments: 10,
+          rate: 0.04,
+        } as Rate),
+      ),
+    );
+
+    const response = sut.execute(fakeRates);
+
+    await expect(response).rejects.toBeInstanceOf(AppError);
+  });
 });
