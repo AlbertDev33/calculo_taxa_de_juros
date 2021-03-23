@@ -4,30 +4,30 @@ import { ICpfValidatorProvider } from '../../../../shared/providers/CpfValidator
 import { IHashProvider } from '../../../../shared/providers/HashProvider/protocol/IHashProvider';
 import { ITokenManagerProvider } from '../../../../shared/providers/TokenManager/protocol/ITokenManagerProvider';
 import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
+import { IConsultSessionUseCase } from './model/IConsultSessionUseCase';
 
-interface IUserSessionSource {
+export interface IUserSessionSource {
   email: string;
   cpf: string;
   cellPhone: number;
   score: number;
 }
 
-interface ITokenGeneration
-  extends Omit<IUserSessionSource, 'email' | 'cellPhone'> {
+interface ITokenGeneration extends Omit<IUserSessionSource, 'cellPhone'> {
   userCpf: string;
   negative: boolean;
 }
 
-interface IResponse {
+export interface IResponse {
   user: IUserSessionSource;
   token: string;
 }
 
-export class ConsultSessionUseCase {
+export class ConsultSessionUseCase implements IConsultSessionUseCase {
   constructor(
-    private cpfValidatorProvider: ICpfValidatorProvider,
-
     private registerAccountRepository: IRegisterAccountRepository,
+
+    private cpfValidatorProvider: ICpfValidatorProvider,
 
     private hashProvider: IHashProvider,
 
@@ -60,6 +60,7 @@ export class ConsultSessionUseCase {
 
       const token = await this.generateToken({
         cpf,
+        email: tempAccount.email,
         userCpf: tempAccount.cpf,
         score: tempAccount.score,
         negative: tempAccount.negative,
@@ -70,6 +71,7 @@ export class ConsultSessionUseCase {
 
     const token = await this.generateToken({
       cpf,
+      email: user.email,
       userCpf: user.cpf,
       score: user.score,
       negative: user.negative,
@@ -80,22 +82,27 @@ export class ConsultSessionUseCase {
 
   private async generateToken({
     cpf,
+    email,
     userCpf,
     score,
     negative,
   }: ITokenGeneration): Promise<string> {
-    const isValidCpf = await this.hashProvider.compareHash(cpf, userCpf);
+    const compareHashedCpf = await this.hashProvider.compareHash(cpf, userCpf);
 
-    if (!isValidCpf) {
+    if (!compareHashedCpf) {
       throw new AppError('Invalid CPF. Try again!');
     }
 
     const { secret, expiresIn } = authConfig.jwt;
 
-    const token = this.tokenManagerProvider.sign({ score, negative }, secret, {
-      subject: userCpf,
-      expiresIn,
-    });
+    const token = this.tokenManagerProvider.sign(
+      { score, negative, email },
+      secret,
+      {
+        subject: userCpf,
+        expiresIn,
+      },
+    );
 
     return token;
   }
