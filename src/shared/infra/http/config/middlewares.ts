@@ -28,6 +28,13 @@ export default (app: Express): void => {
         });
       }
 
+      if (err instanceof InternalError) {
+        return response.status(err.statusCode).json({
+          statusCode: err.statusCode,
+          message: err.message,
+        });
+      }
+
       return response.status(500).json({
         status: 'Error',
         message: `Internal server error: ${err.message}`,
