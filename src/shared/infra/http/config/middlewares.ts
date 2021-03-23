@@ -16,14 +16,14 @@ export default (app: Express): void => {
     async (err: Error, _: Request, response: Response, next: NextFunction) => {
       if (err instanceof AppError) {
         return response.status(err.statusCode).json({
-          status: 'error',
+          statusCode: err.statusCode,
           message: err.message,
         });
       }
 
       if (err instanceof ClientRequestError) {
         return response.status(err.statusCode).json({
-          status: 'error',
+          statusCode: err.statusCode,
           message: err.message,
         });
       }
