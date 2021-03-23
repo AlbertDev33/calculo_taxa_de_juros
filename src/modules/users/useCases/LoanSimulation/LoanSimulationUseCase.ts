@@ -2,10 +2,8 @@ import { AppError } from '../../../../shared/errors/AppError';
 import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
 import { InternalError } from '../../../../shared/errors/InternalError';
 import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
-import { IResponse } from '../../../../shared/providers/AxiosProvider/RequestProvider';
 import { IInterestRateRepository } from '../../infra/typeorm/repositories/protocol/IInterestRateRepository';
 import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
-import { Rate } from '../../infra/typeorm/schema/Rate';
 import { IRequest } from '../CreateUser/RegisterUseCase';
 import { ILoanSimulationUseCase } from './model/ILoanSimulationUseCase';
 
