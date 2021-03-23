@@ -24,12 +24,22 @@ interface ISutTypes {
 
 const makeRequestProvider = (): IRequestProvider => {
   class RequestProviderStub implements IRequestProvider {
-    post<T>(
+    post<IResponseSource>(
       url: string,
       data?: any,
       config?: IRequestConfig,
-    ): Promise<IResponse<T>> {
-      return new Promise(resolve => resolve({ data } as IResponse));
+    ): Promise<IResponse<IResponseSource>> {
+      const mockedReturnValueAxios = {
+        numeroParcelas: 12,
+        outrasTaxas: 85,
+        total: 1125.0,
+        valorJuros: 40.0,
+        valorParcela: 93.75,
+        valorSolicitado: 1000,
+      };
+      return new Promise(resolve =>
+        resolve({ data: mockedReturnValueAxios } as IResponse),
+      );
     }
   }
 
@@ -72,22 +82,18 @@ const makeInterestRateRepository = (): IInterestRateRepository => {
     findRateLowScore({ type, installments }: InterestRateDTO): Promise<Rate> {
       return new Promise(resolve =>
         resolve({
-          seis: 0.04,
-          doze: 0.045,
-          dezoito: 0.05,
-          vinteEquatro: 0.053,
-          trintaEseis: 0.055,
+          type: 'valid_type',
+          installments: 6,
+          rate: 0.04,
         } as Rate),
       );
     }
     findRateHightScore({ type, installments }: InterestRateDTO): Promise<Rate> {
       return new Promise(resolve =>
         resolve({
-          seis: 0.04,
-          doze: 0.045,
-          dezoito: 0.05,
-          vinteEquatro: 0.053,
-          trintaEseis: 0.055,
+          type: 'valid_type',
+          installments: 6,
+          rate: 0.03,
         } as Rate),
       );
     }
@@ -142,7 +148,7 @@ describe('Loan Simulation', () => {
   });
 
   it('Should returns fees from api for an unregistered user', async () => {
-    const { sut, requestProviderStub } = makeSut();
+    const { sut } = makeSut();
 
     const fakeAccount = {
       email: 'any_email@mail.com',
@@ -150,28 +156,17 @@ describe('Loan Simulation', () => {
       score: 0,
       negative: false,
       installments: 6,
+      rate: 0.04,
       value: 1000,
     };
 
-    jest
-      .spyOn(requestProviderStub, 'post')
-      .mockReturnValueOnce(
-        new Promise(resolve =>
-          resolve({ data: mockedReturnValueAxios } as IResponse),
-        ),
-      );
-
     const loanSimulation = await sut.execute(fakeAccount);
 
-    expect(loanSimulation).toEqual({ data: mockedReturnValueAxios });
+    expect(loanSimulation).toEqual(mockedReturnValueAxios);
   });
 
   it('Should returns fees from external api for an registered user with low score', async () => {
-    const {
-      sut,
-      registerAccountRepositoryStub,
-      requestProviderStub,
-    } = makeSut();
+    const { sut, registerAccountRepositoryStub } = makeSut();
 
     const fakeAccount = {
       email: 'any_email@mail.com',
@@ -195,25 +190,13 @@ describe('Loan Simulation', () => {
         ),
       );
 
-    jest
-      .spyOn(requestProviderStub, 'post')
-      .mockReturnValueOnce(
-        new Promise(resolve =>
-          resolve({ data: mockedReturnValueAxios } as IResponse),
-        ),
-      );
-
     const loanSimulation = await sut.execute(fakeAccount);
 
-    expect(loanSimulation).toEqual({ data: mockedReturnValueAxios });
+    expect(loanSimulation).toEqual(mockedReturnValueAxios);
   });
 
   it('Should returns fees from external api for an registered user with hight score', async () => {
-    const {
-      sut,
-      registerAccountRepositoryStub,
-      requestProviderStub,
-    } = makeSut();
+    const { sut, registerAccountRepositoryStub } = makeSut();
 
     const fakeAccount = {
       email: 'any_email@mail.com',
@@ -237,17 +220,9 @@ describe('Loan Simulation', () => {
         ),
       );
 
-    jest
-      .spyOn(requestProviderStub, 'post')
-      .mockReturnValueOnce(
-        new Promise(resolve =>
-          resolve({ data: mockedReturnValueAxios } as IResponse),
-        ),
-      );
-
     const loanSimulation = await sut.execute(fakeAccount);
 
-    expect(loanSimulation).toEqual({ data: mockedReturnValueAxios });
+    expect(loanSimulation).toEqual(mockedReturnValueAxios);
   });
 
   it('Should return a generic error from LoanSimulationUseCase service when the request fail before reaching the service', async () => {

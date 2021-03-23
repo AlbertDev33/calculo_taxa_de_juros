@@ -33,7 +33,7 @@ export interface IResponseSource {
 interface IExpressCreditSource {
   installments: number;
   value: number;
-  findInterestRate: Rate;
+  findInterestRate: number;
 }
 
 export class LoanSimulationUseCase implements ILoanSimulationUseCase {
@@ -50,7 +50,7 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
     score,
     installments,
     value,
-  }: ILoanSimulationSource): Promise<IResponse<IResponseSource>> {
+  }: ILoanSimulationSource): Promise<IResponseSource> {
     const user = await this.registerAccountRepository.findByEmail(email);
 
     if (score < 0) {
@@ -68,13 +68,13 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
         throw new InternalError('Internal Error', 500);
       }
 
-      const response = await this.callApiCreditExpress({
+      const responseApi = await this.callApiCreditExpress({
         installments,
         value,
         findInterestRate,
       });
 
-      return response;
+      return responseApi;
     }
 
     if (user.score <= 500) {
@@ -88,16 +88,17 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
         throw new InternalError('Internal Error', 500);
       }
 
-      const response = await this.callApiCreditExpress({
+      const responseApi = await this.callApiCreditExpress({
         installments,
         value,
         findInterestRate,
       });
 
-      return response;
+      return responseApi;
     }
 
     const type = TypeScore.SCORE_ALTO;
+
     const findInterestRate = await this.interestRateRepository.findRateHightScore(
       { type, installments },
     );
@@ -109,7 +110,7 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
     const response = await this.callApiCreditExpress({
       installments,
       value,
-      findInterestRate,
+      findInterestRate: findInterestRate.rate,
     });
 
     return response;
@@ -118,19 +119,19 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
   private async returnFeeToLowScore(
     type: string,
     installments: number,
-  ): Promise<Rate | undefined> {
+  ): Promise<number | undefined> {
     const findInterestRate = await this.interestRateRepository.findRateLowScore(
       { type, installments },
     );
 
-    return findInterestRate;
+    return findInterestRate?.rate;
   }
 
   private async callApiCreditExpress({
     installments,
     value,
     findInterestRate,
-  }: IExpressCreditSource): Promise<IResponse<IResponseSource>> {
+  }: IExpressCreditSource): Promise<IResponseSource> {
     try {
       const response = await this.requestProvider.post<IResponseSource>(
         'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
@@ -140,8 +141,9 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
           taxaJuros: findInterestRate,
         },
       );
+      const responseApi = response.data;
 
-      return response;
+      return responseApi;
     } catch (err) {
       if (err.response && err.response.status) {
         await this.returnErrorInvalidInstallments(err, installments);

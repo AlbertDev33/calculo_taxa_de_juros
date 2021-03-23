@@ -10,5 +10,5 @@ export interface ILoanSimulationUseCase {
     installments,
     value,
     score,
-  }: ILoanSimulationSource): Promise<IResponse<IResponseSource>>;
+  }: ILoanSimulationSource): Promise<IResponseSource>;
 }
