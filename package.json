@@ -5,8 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules --respawn src/shared/infra/http/server.ts",
-    "test": "jest --forceExit --runInBand",
-    "test:integration": "yarn test -- -c jest-integration-config.js"
+    "test": "jest --forceExit --runInBand"
   },
   "dependencies": {
     "axios": "^0.21.1",

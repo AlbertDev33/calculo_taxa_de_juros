@@ -6,7 +6,6 @@
     "rootDir": "./",
     "strict": true,
     "strictPropertyInitialization": false,
-    "baseUrl": "./",
     "allowJs": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
