@@ -36,19 +36,13 @@ export class InterestRateRepository implements IInterestRateRepository {
 
   async create({
     type,
-    seis,
-    doze,
-    dezoito,
-    vinteEquatro,
-    trintaEseis,
+    installments,
+    rate,
   }: ICreateInstallmentsDTO): Promise<Rate> {
     const rates = this.ormRepository.create({
       type,
-      seis,
-      doze,
-      dezoito,
-      vinteEquatro,
-      trintaEseis,
+      installments,
+      rate,
     });
 
     await this.ormRepository.save(rates);

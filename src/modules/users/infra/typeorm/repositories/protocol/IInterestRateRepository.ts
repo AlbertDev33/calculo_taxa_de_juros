@@ -3,14 +3,7 @@ import { InterestRateDTO } from '../../../../dtos/InterestRateDTO';
 import { Rate } from '../../schema/Rate';
 
 export interface IInterestRateRepository {
-  create({
-    type,
-    seis,
-    doze,
-    dezoito,
-    vinteEquatro,
-    trintaEseis,
-  }: ICreateInstallmentsDTO): Promise<Rate>;
+  create({ type, installments, rate }: ICreateInstallmentsDTO): Promise<Rate>;
   findRateLowScore({
     type,
     installments,

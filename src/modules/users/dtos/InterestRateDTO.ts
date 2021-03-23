@@ -1,4 +1,4 @@
 export interface InterestRateDTO {
   type: string;
-  installments: string;
+  installments: number;
 }
