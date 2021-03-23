@@ -28,9 +28,10 @@ export default (app: Express): void => {
         });
       }
 
-      console.log(err);
-
-      return new InternalError(err.message);
+      return response.status(500).json({
+        status: 'Error',
+        message: `Internal server error: ${err.message}`,
+      });
     },
   );
 };
