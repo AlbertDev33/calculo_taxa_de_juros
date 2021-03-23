@@ -1,6 +1,6 @@
 import { getConnection } from 'typeorm';
 
-import { disconnect, openConnection } from '../../infra/typeorm';
+import { disconnect, openConnection } from '../../index';
 import { RegisterAccountRepository } from './RegisterAccountRepository';
 
 describe('Register Account on Mongo', () => {
