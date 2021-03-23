@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
 import { AppError } from '../../../../shared/errors/AppError';
+import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
 import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
 import {
   IRequestConfig,
@@ -243,9 +244,11 @@ describe('Loan Simulation', () => {
 
     const loanSimulation = sut.execute(fakeAccount);
 
-    await expect(loanSimulation).rejects.toThrow(
-      'Unexpected error when trying to communicate to Credito Express: Network Error',
-    );
+    expect(loanSimulation).rejects.toBeInstanceOf(ClientRequestError);
+
+    // await expect(loanSimulation).rejects.toThrow(
+    //   'Unexpected error when trying to communicate to Credito Express: Network Error',
+    // );
   });
 
   it('Should return a message error from LoanSimulationUseCase service when the invalid installments number', async () => {
