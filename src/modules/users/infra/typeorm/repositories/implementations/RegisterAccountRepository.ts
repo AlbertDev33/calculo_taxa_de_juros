@@ -22,7 +22,7 @@ export class RegisterAccountRepository implements IRegisterAccountRepository {
   }
 
   async findByEmail(email: string): Promise<Account | undefined> {
-    const findEmail = await this.ormRepository.findOne({ where: email });
+    const findEmail = await this.ormRepository.findOne({ where: { email } });
 
     return findEmail;
   }
