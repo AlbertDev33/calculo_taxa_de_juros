@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import express, { Request, Response, NextFunction, Router } from 'express';
 
