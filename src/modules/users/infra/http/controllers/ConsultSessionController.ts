@@ -21,8 +21,8 @@ export class ConsultSessionController {
       cellPhone,
     });
 
-    return response.status(201).json({
-      session: this.transformerProvider.internalTransform(session),
-    });
+    return response
+      .status(201)
+      .json(this.transformerProvider.internalTransform(session));
   }
 }
