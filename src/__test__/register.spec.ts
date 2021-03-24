@@ -4,7 +4,6 @@ import { getConnection } from 'typeorm';
 
 import { openConnection, disconnect } from '../modules/users/infra/typeorm';
 import app from '../shared/infra/http/config/app';
-import { CpfValidatorProvider } from '../shared/providers/CpfValidator/CpfValidatorProvider';
 
 describe('Register User', () => {
   beforeAll(async () => {
