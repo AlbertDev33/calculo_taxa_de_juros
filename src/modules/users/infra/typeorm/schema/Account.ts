@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   Entity,
   ObjectIdColumn,
@@ -18,6 +19,7 @@ export class Account {
   email: string;
 
   @Column()
+  @Exclude()
   cpf: string;
 
   @Column()
