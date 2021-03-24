@@ -1,3 +1,4 @@
+import { Transformer } from '../../../../shared/providers/ClassTransformerProvider/ClassTransformerProvider';
 import { CpfValidatorProvider } from '../../../../shared/providers/CpfValidator/CpfValidatorProvider';
 import { BCryptHashProvider } from '../../../../shared/providers/HashProvider/BCryptHashProvider';
 import { RegisterController } from '../../infra/http/controllers/RegisterController';
@@ -14,5 +15,7 @@ export const makeRegisterController = (): RegisterController => {
     hashProvider,
   );
 
-  return new RegisterController(registerUseCase);
+  const transformer = new Transformer();
+
+  return new RegisterController(registerUseCase, transformer);
 };

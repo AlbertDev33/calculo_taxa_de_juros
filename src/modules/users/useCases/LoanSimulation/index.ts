@@ -5,7 +5,7 @@ import { RegisterAccountRepository } from '../../infra/typeorm/repositories/impl
 import { LoanSimulationUseCase } from './LoanSimulationUseCase';
 
 const makeLoanSimulationController = (): LoanSimulationController => {
-  const registerAccountRepository = new RegisterAccountRepository();
+  const registerAccountRepository = RegisterAccountRepository.getInstance();
   const interestRateRepository = new InterestRateRepository();
   const requestProvider = new RequestProvider();
 

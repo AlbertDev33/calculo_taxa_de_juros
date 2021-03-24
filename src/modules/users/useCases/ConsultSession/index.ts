@@ -6,8 +6,8 @@ import { RegisterAccountRepository } from '../../infra/typeorm/repositories/impl
 import { ConsultSessionUseCase } from './ConsultSessionUseCase';
 
 export const makeConsultSessionController = (): ConsultSessionController => {
+  const registerAccountRepository = RegisterAccountRepository.getInstance();
   const cpfValidatorProvider = new CpfValidatorProvider();
-  const registerAccountRepository = new RegisterAccountRepository();
   const bcriptHashProvider = new BCryptHashProvider();
   const tokenManagerProvider = new TokenManagerProvider();
 
