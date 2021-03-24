@@ -1,14 +1,14 @@
 import { celebrate, Segments, Joi } from 'celebrate';
-import { Router } from 'express';
 
 import { confirmUserAuthenticated } from '../../../shared/infra/http/middlewares/confirmUserAuthenticated';
 import {
   IRequest,
   IResponse,
+  Route,
 } from '../../../shared/providers/ExpressProvider/HttpRequest';
 import { makeLoanSimulationController } from '../useCases/LoanSimulation';
 
-const loanSimulationRouter = Router();
+const loanSimulationRouter = Route();
 
 loanSimulationRouter.post(
   '/',

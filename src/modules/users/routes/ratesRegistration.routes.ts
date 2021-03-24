@@ -1,13 +1,13 @@
 import { celebrate, Segments, Joi } from 'celebrate';
-import { Router } from 'express';
 
 import {
   IRequest,
   IResponse,
+  Route,
 } from '../../../shared/providers/ExpressProvider/HttpRequest';
 import { makeRatesRegistrationController } from '../useCases/RatesRegistration';
 
-const ratesRegistrationRouter = Router();
+const ratesRegistrationRouter = Route();
 
 ratesRegistrationRouter.post(
   '/',

@@ -1,13 +1,13 @@
 import { celebrate, Segments, Joi } from 'celebrate';
-import { Router } from 'express';
 
 import {
   IRequest,
   IResponse,
+  Route,
 } from '../../../shared/providers/ExpressProvider/HttpRequest';
 import { makeConsultSessionController } from '../useCases/ConsultSession';
 
-const consultSessionRouter = Router();
+const consultSessionRouter = Route();
 
 consultSessionRouter.post(
   '/',

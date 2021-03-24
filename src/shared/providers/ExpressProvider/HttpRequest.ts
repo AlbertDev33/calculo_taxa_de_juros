@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, Router } from 'express';
 
 import { IHttpRequest } from './protocol/IHttpRequest';
 
@@ -15,6 +15,14 @@ export interface IRequest extends Request {
 export interface IResponse extends Response {}
 
 export interface INextFunction extends NextFunction {}
+
+export interface IRouter extends Router {}
+
+export const Route = (): IRouter => {
+  const router = express.Router();
+
+  return router;
+};
 
 export class HttpRequest implements IHttpRequest {
   async create(
