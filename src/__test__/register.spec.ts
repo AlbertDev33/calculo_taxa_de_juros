@@ -25,7 +25,6 @@ describe('Register User', () => {
     });
 
     expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty('id');
   });
 
   it('Should return 400 when there is a validation error', async () => {
