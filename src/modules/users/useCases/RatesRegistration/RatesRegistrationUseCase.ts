@@ -39,14 +39,16 @@ export class RatesRegistrationUseCase implements IRatesRegistrationUseCase {
       throw new AppError('Invalid Installments value!');
     }
 
-    const findRateLowScore = await this.interasteRateRepository.findRateLowScore(
-      { type, installments },
-    );
+    const findRate = await this.interasteRateRepository.findRate({
+      type,
+      installments,
+      rate,
+    });
 
     if (
-      findRateLowScore?.type === type &&
-      findRateLowScore?.installments === installments &&
-      findRateLowScore?.rate === rate
+      findRate?.installments === installments &&
+      findRate?.type === type &&
+      findRate?.rate === rate
     ) {
       throw new AppError('Register already exists!');
     }

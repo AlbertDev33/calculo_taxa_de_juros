@@ -21,6 +21,13 @@ const makeInterestRateRepository = (): IInterestRateRepository => {
     findRateHightScore({ type, installments }: InterestRateDTO): Promise<Rate> {
       return new Promise(resolve => resolve({} as Rate));
     }
+    findRate({
+      type,
+      installments,
+      rate,
+    }: InterestRateDTO): Promise<Rate | undefined> {
+      return new Promise(resolve => resolve({} as Rate));
+    }
   }
 
   return new InterestRateRepositoryStub();
@@ -102,7 +109,7 @@ describe('Installments Registration', () => {
     await expect(response).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should not be able to create an LowScore data that already exists', async () => {
+  it('Should not be able to create an register that already exists', async () => {
     const { sut, interestRateRepositoryStub } = makeSut();
 
     const fakeRates = {
@@ -112,17 +119,16 @@ describe('Installments Registration', () => {
       rate: 0.04,
     };
 
-    jest
-      .spyOn(interestRateRepositoryStub, 'findRateLowScore')
-      .mockReturnValueOnce(
-        new Promise(resolve =>
-          resolve({
-            type: 'SCORE_BAIXO',
-            installments: 6,
-            rate: 0.04,
-          } as Rate),
-        ),
-      );
+    jest.spyOn(interestRateRepositoryStub, 'findRate').mockReturnValueOnce(
+      new Promise(resolve =>
+        resolve({
+          id: 'valid_id',
+          type: 'SCORE_BAIXO',
+          installments: 6,
+          rate: 0.04,
+        } as Rate),
+      ),
+    );
 
     const response = sut.execute(fakeRates);
 
