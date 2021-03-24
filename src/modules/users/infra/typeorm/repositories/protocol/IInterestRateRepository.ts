@@ -12,4 +12,9 @@ export interface IInterestRateRepository {
     type,
     installments,
   }: InterestRateDTO): Promise<Rate | undefined>;
+  findRate({
+    type,
+    installments,
+    rate,
+  }: InterestRateDTO): Promise<Rate | undefined>;
 }

@@ -34,6 +34,18 @@ export class InterestRateRepository implements IInterestRateRepository {
     return findRates;
   }
 
+  async findRate({
+    type,
+    installments,
+    rate,
+  }: InterestRateDTO): Promise<Rate | undefined> {
+    const findRate = await this.ormRepository.findOne({
+      where: { type, installments, rate },
+    });
+
+    return findRate;
+  }
+
   async create({
     type,
     installments,
