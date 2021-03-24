@@ -1,3 +1,4 @@
+import { ITransformerProvider } from '../../../../../shared/providers/ClassTransformerProvider/model/ITransformerProvider';
 import {
   IRequest,
   IResponse,
@@ -5,7 +6,11 @@ import {
 import { IConsultSessionUseCase } from '../../../useCases/ConsultSession/model/IConsultSessionUseCase';
 
 export class ConsultSessionController {
-  constructor(private consultSessionUseCase: IConsultSessionUseCase) {}
+  constructor(
+    private consultSessionUseCase: IConsultSessionUseCase,
+
+    private transformerProvider: ITransformerProvider,
+  ) {}
 
   async handle(request: IRequest, response: IResponse): Promise<IResponse> {
     const { cpf, email, cellPhone } = request.body;
@@ -16,6 +21,8 @@ export class ConsultSessionController {
       cellPhone,
     });
 
-    return response.status(201).json(session);
+    return response.status(201).json({
+      session: this.transformerProvider.internalTransform(session),
+    });
   }
 }

@@ -1,3 +1,4 @@
+import { Transformer } from '../../../../shared/providers/ClassTransformerProvider/ClassTransformerProvider';
 import { CpfValidatorProvider } from '../../../../shared/providers/CpfValidator/CpfValidatorProvider';
 import { BCryptHashProvider } from '../../../../shared/providers/HashProvider/BCryptHashProvider';
 import { TokenManagerProvider } from '../../../../shared/providers/TokenManager/TokenManagerProvider';
@@ -18,5 +19,7 @@ export const makeConsultSessionController = (): ConsultSessionController => {
     tokenManagerProvider,
   );
 
-  return new ConsultSessionController(consultSessionUseCase);
+  const transformer = new Transformer();
+
+  return new ConsultSessionController(consultSessionUseCase, transformer);
 };
