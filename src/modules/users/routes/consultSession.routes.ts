@@ -1,11 +1,18 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 
+import {
+  IRequest,
+  IResponse,
+} from '../../../shared/providers/ExpressProvider/HttpRequest';
 import { makeConsultSessionController } from '../useCases/ConsultSession';
 
 const consultSessionRouter = Router();
 
-consultSessionRouter.post('/', async (request: Request, response: Response) => {
-  await makeConsultSessionController().handle(request, response);
-});
+consultSessionRouter.post(
+  '/',
+  async (request: IRequest, response: IResponse) => {
+    await makeConsultSessionController().handle(request, response);
+  },
+);
 
 export { consultSessionRouter };

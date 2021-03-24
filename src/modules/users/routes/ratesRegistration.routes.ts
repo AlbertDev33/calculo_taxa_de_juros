@@ -1,12 +1,16 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 
+import {
+  IRequest,
+  IResponse,
+} from '../../../shared/providers/ExpressProvider/HttpRequest';
 import { makeRatesRegistrationController } from '../useCases/RatesRegistration';
 
 const ratesRegistrationRouter = Router();
 
 ratesRegistrationRouter.post(
   '/',
-  async (request: Request, response: Response) => {
+  async (request: IRequest, response: IResponse) => {
     await makeRatesRegistrationController().handle(request, response);
   },
 );

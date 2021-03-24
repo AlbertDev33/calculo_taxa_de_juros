@@ -1,6 +1,10 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 
 import { confirmUserAuthenticated } from '../../../shared/infra/http/middlewares/confirmUserAuthenticated';
+import {
+  IRequest,
+  IResponse,
+} from '../../../shared/providers/ExpressProvider/HttpRequest';
 import { makeLoanSimulationController } from '../useCases/LoanSimulation';
 
 const loanSimulationRouter = Router();
@@ -8,7 +12,7 @@ const loanSimulationRouter = Router();
 loanSimulationRouter.post(
   '/',
   confirmUserAuthenticated,
-  async (request: Request, response: Response) => {
+  async (request: IRequest, response: IResponse) => {
     await makeLoanSimulationController().handle(request, response);
   },
 );

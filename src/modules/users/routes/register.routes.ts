@@ -1,10 +1,14 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 
+import {
+  IRequest,
+  IResponse,
+} from '../../../shared/providers/ExpressProvider/HttpRequest';
 import { makeRegisterController } from '../useCases/CreateUser';
 
 const registerRouter = Router();
 
-registerRouter.post('/', async (request: Request, response: Response) => {
+registerRouter.post('/', async (request: IRequest, response: IResponse) => {
   await makeRegisterController().handle(request, response);
 });
 

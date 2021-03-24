@@ -1,8 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 
 import authConfig from '../../../../config/auth';
 import { AppError } from '../../../errors/AppError';
+import {
+  IRequest,
+  IResponse,
+  INextFunction,
+} from '../../../providers/ExpressProvider/HttpRequest';
 
 interface ITokenPayload {
   iat: number;
@@ -13,9 +17,9 @@ interface ITokenPayload {
 }
 
 export const confirmUserAuthenticated = (
-  request: Request,
-  response: Response,
-  next: NextFunction,
+  request: IRequest,
+  response: IResponse,
+  next: INextFunction,
 ): void => {
   const authHeader = request.headers.authorization;
 

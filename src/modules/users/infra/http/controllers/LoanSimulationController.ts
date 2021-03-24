@@ -1,11 +1,13 @@
-import { Request, Response } from 'express';
-
+import {
+  IRequest,
+  IResponse,
+} from '../../../../../shared/providers/ExpressProvider/HttpRequest';
 import { ILoanSimulationUseCase } from '../../../useCases/LoanSimulation/model/ILoanSimulationUseCase';
 
 export class LoanSimulationController {
   constructor(private loanSimulationUseCase: ILoanSimulationUseCase) {}
 
-  async handle(request: Request, response: Response): Promise<Response> {
+  async handle(request: IRequest, response: IResponse): Promise<IResponse> {
     const { email, score } = request.user;
     const { installments, value } = request.body;
 
