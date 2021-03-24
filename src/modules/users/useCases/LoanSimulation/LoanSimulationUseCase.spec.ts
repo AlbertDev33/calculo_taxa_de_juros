@@ -98,6 +98,14 @@ const makeInterestRateRepository = (): IInterestRateRepository => {
         } as Rate),
       );
     }
+
+    findRate({
+      type,
+      installments,
+      rate,
+    }: InterestRateDTO): Promise<Rate | undefined> {
+      return new Promise(resolve => resolve({} as Rate));
+    }
   }
 
   return new InterestRateRepositoryStub();
@@ -244,11 +252,9 @@ describe('Loan Simulation', () => {
 
     const loanSimulation = sut.execute(fakeAccount);
 
-    expect(loanSimulation).rejects.toBeInstanceOf(ClientRequestError);
-
-    // await expect(loanSimulation).rejects.toThrow(
-    //   'Unexpected error when trying to communicate to Credito Express: Network Error',
-    // );
+    await expect(loanSimulation).rejects.toThrow(
+      'Unexpected error when trying to communicate to Credito Express: Network Error',
+    );
   });
 
   it('Should return a message error from LoanSimulationUseCase service when the invalid installments number', async () => {
