@@ -1,3 +1,4 @@
+import { errors } from 'celebrate';
 import cors from 'cors';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import 'express-async-errors';
@@ -11,6 +12,8 @@ export default (app: Express): void => {
   app.use(cors({ origin: '*' }));
   app.use(express.json());
   app.use(router);
+
+  app.use(errors());
 
   app.use(
     async (err: Error, _: Request, response: Response, next: NextFunction) => {

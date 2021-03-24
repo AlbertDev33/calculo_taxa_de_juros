@@ -1,3 +1,4 @@
+import { celebrate, Segments, Joi } from 'celebrate';
 import { Router } from 'express';
 
 import {
@@ -10,6 +11,13 @@ const ratesRegistrationRouter = Router();
 
 ratesRegistrationRouter.post(
   '/',
+  celebrate({
+    [Segments.BODY]: {
+      type: Joi.string().required(),
+      installments: Joi.number().required(),
+      rate: Joi.number().required(),
+    },
+  }),
   async (request: IRequest, response: IResponse) => {
     await makeRatesRegistrationController().handle(request, response);
   },

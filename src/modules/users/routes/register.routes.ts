@@ -1,3 +1,4 @@
+import { celebrate, Segments, Joi } from 'celebrate';
 import { Router } from 'express';
 
 import {
@@ -8,8 +9,19 @@ import { makeRegisterController } from '../useCases/CreateUser';
 
 const registerRouter = Router();
 
-registerRouter.post('/', async (request: IRequest, response: IResponse) => {
-  await makeRegisterController().handle(request, response);
-});
+registerRouter.post(
+  '/',
+  celebrate({
+    [Segments.BODY]: {
+      name: Joi.string().required(),
+      email: Joi.string().email().required(),
+      cpf: Joi.string().required(),
+      cellPhone: Joi.number().required(),
+    },
+  }),
+  async (request: IRequest, response: IResponse) => {
+    await makeRegisterController().handle(request, response);
+  },
+);
 
 export { registerRouter };
