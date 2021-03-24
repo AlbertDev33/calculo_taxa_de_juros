@@ -45,10 +45,14 @@ export class RatesRegistrationUseCase implements IRatesRegistrationUseCase {
       rate,
     });
 
+    const responseInstallments = findRate?.installments;
+    const responseType = findRate?.type;
+    const responseRate = findRate?.rate;
+
     if (
-      findRate?.installments === installments &&
-      findRate?.type === type &&
-      findRate?.rate === rate
+      responseInstallments === installments &&
+      responseType === type &&
+      responseRate === rate
     ) {
       throw new AppError('Register already exists!');
     }
