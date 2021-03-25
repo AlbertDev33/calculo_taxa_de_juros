@@ -153,4 +153,30 @@ describe('Installments Registration', () => {
 
     await expect(response).rejects.toBeInstanceOf(AppError);
   });
+
+  it('Should throw if duplicate installments and type', async () => {
+    const { sut, interestRateRepositoryStub } = makeSut();
+
+    const fakeRates = {
+      id: 'valid_id',
+      type: 'SCORE_BAIXO',
+      installments: 6,
+      rate: 0.04,
+    };
+
+    jest.spyOn(interestRateRepositoryStub, 'findRate').mockReturnValueOnce(
+      new Promise(resolve =>
+        resolve({
+          id: 'valid_id',
+          type: 'SCORE_BAIXO',
+          installments: 6,
+          rate: 0.06,
+        }),
+      ),
+    );
+
+    const response = sut.execute(fakeRates);
+
+    await expect(response).rejects.toBeInstanceOf(AppError);
+  });
 });
