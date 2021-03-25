@@ -17,27 +17,22 @@ export class RatesRegistrationUseCase implements IRatesRegistrationUseCase {
     installments,
     rate,
   }: ICreateInstallmentsDTO): Promise<Rate> {
-    const typeScore = {
-      SCORE_BAIXO: TypeScore.SCORE_BAIXO,
-      SCORE_ALTO: TypeScore.SCORE_ALTO,
-    };
+    const typeMap = new Map([
+      ['SCORE_BAIXO', TypeScore.SCORE_BAIXO],
+      ['SCORE_ALTO', TypeScore.SCORE_ALTO],
+    ]);
 
-    if (!Object.prototype.hasOwnProperty.call(typeScore, type)) {
+    if (!typeMap.has(type)) {
       throw new AppError('Invalid Type Description!');
     }
 
-    const installmentsNumbers = {
-      '6': 6,
-      '12': 12,
-      '18': 18,
-      '24': 24,
-      '36': 36,
-    };
-    if (
-      !Object.prototype.hasOwnProperty.call(installmentsNumbers, installments)
-    ) {
-      throw new AppError('Invalid Installments value!');
-    }
+    const installmentsMap = new Map([
+      [6, 6],
+      [12, 12],
+      [18, 18],
+      [24, 24],
+      [36, 36],
+    ]);
 
     const findRate = await this.interasteRateRepository.findRate({
       type,
@@ -50,8 +45,8 @@ export class RatesRegistrationUseCase implements IRatesRegistrationUseCase {
     const responseRate = findRate?.rate;
 
     if (
-      responseInstallments === installments &&
-      responseType === type &&
+      installmentsMap.has(responseInstallments as number) &&
+      typeMap.has(responseType as string) &&
       responseRate === rate
     ) {
       throw new AppError('Register already exists!');
