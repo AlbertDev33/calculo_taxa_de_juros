@@ -34,6 +34,10 @@ export class RatesRegistrationUseCase implements IRatesRegistrationUseCase {
       [36, 36],
     ]);
 
+    if (!installmentsMap.has(installments)) {
+      throw new AppError('Invalid Installments!');
+    }
+
     const findRate = await this.interasteRateRepository.findRate({
       type,
       installments,
@@ -54,6 +58,13 @@ export class RatesRegistrationUseCase implements IRatesRegistrationUseCase {
       responseRate === rate
     ) {
       throw new AppError('Register already exists!');
+    }
+
+    if (
+      installmentsMap.has(responseInstallments) &&
+      typeMap.has(responseType)
+    ) {
+      throw new AppError('Installments and Type already register!');
     }
 
     const rates = await this.interasteRateRepository.create({
