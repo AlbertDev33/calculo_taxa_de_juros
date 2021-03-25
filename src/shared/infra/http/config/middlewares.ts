@@ -39,7 +39,7 @@ export default (app: Express): void => {
       }
 
       return response.status(500).json({
-        status: 'Error',
+        statusCode: '500',
         message: `Internal server error: ${err.message}`,
       });
     },
