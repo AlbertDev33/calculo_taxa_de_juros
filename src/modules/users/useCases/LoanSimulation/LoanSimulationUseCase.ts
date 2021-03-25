@@ -28,10 +28,10 @@ export interface IResponseSource {
   readonly valorSolicitado: number;
 }
 
-interface IExpressCreditSource {
+export interface IExpressCreditSource {
   installments: number;
   value: number;
-  findInterestRate: number;
+  findInterestRate?: number;
 }
 
 export class LoanSimulationUseCase implements ILoanSimulationUseCase {
@@ -130,55 +130,16 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
     value,
     findInterestRate,
   }: IExpressCreditSource): Promise<IResponseSource> {
-    try {
-      const response = await this.requestProvider.post<IResponseSource>(
-        'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
-        {
-          numeroParcelas: installments,
-          valor: value,
-          taxaJuros: findInterestRate,
-        },
-      );
-      const responseApi = response.data;
+    const response = await this.requestProvider.post<IResponseSource>(
+      'https://us-central1-creditoexpress-dev.cloudfunctions.net/teste-backend',
+      {
+        numeroParcelas: installments,
+        valor: value,
+        taxaJuros: findInterestRate,
+      },
+    );
+    const responseApi = response.data;
 
-      return responseApi;
-    } catch (err) {
-      if (err.response && err.response.status) {
-        await this.returnErrorInvalidInstallments(err, installments);
-
-        await this.returnErrorInvalidParameters(err, {
-          installments,
-          value,
-          findInterestRate,
-        });
-      }
-
-      throw new ClientRequestError(err.message);
-    }
-  }
-
-  private async returnErrorInvalidInstallments(
-    err: any,
-    installments: number,
-  ): Promise<void> {
-    const installmentsMap = new Map([
-      [6, 6],
-      [12, 12],
-      [18, 18],
-      [24, 24],
-      [36, 36],
-    ]);
-    if (!installmentsMap.has(installments)) {
-      throw new AppError(`${err.response.data}`, err.response.status);
-    }
-  }
-
-  private async returnErrorInvalidParameters(
-    err: any,
-    { installments, value, findInterestRate }: IExpressCreditSource,
-  ): Promise<void> {
-    if (!installments || !value || !findInterestRate) {
-      throw new AppError(`${err.response.data}`, err.response.status);
-    }
+    return responseApi;
   }
 }
