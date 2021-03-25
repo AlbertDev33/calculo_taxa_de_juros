@@ -161,16 +161,14 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
     err: any,
     installments: number,
   ): Promise<void> {
-    const installmentsNumbers = {
-      '6': 6,
-      '12': 12,
-      '18': 18,
-      '24': 24,
-      '36': 36,
-    };
-    if (
-      !Object.prototype.hasOwnProperty.call(installmentsNumbers, installments)
-    ) {
+    const installmentsMap = new Map([
+      [6, 6],
+      [12, 12],
+      [18, 18],
+      [24, 24],
+      [36, 36],
+    ]);
+    if (!installmentsMap.has(installments)) {
       throw new AppError(`${err.response.data}`, err.response.status);
     }
   }
