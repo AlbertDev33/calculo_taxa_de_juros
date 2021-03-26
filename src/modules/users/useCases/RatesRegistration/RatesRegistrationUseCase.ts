@@ -39,7 +39,7 @@ export class RatesRegistrationUseCase implements IRatesRegistrationUseCase {
     }
 
     if (rate <= 0) {
-      throw new AppError('Invalid Installments!');
+      throw new AppError('Invalid rate!');
     }
 
     const findRate = await this.interasteRateRepository.findRate({
