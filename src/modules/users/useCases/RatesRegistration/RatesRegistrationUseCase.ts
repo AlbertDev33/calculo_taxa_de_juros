@@ -38,6 +38,10 @@ export class RatesRegistrationUseCase implements IRatesRegistrationUseCase {
       throw new AppError('Invalid Installments!');
     }
 
+    if (rate <= 0) {
+      throw new AppError('Invalid Installments!');
+    }
+
     const findRate = await this.interasteRateRepository.findRate({
       type,
       installments,
