@@ -70,8 +70,17 @@ export class RatesRegistrationUseCase implements IRatesRegistrationUseCase {
     const existInstallments = rateAlreadyExists?.installments;
     const existType = rateAlreadyExists?.type;
 
-    if (existInstallments === installments && existType === type) {
-      throw new AppError('Installments or Type already register!');
+    const isDuplicatedInstallments = new Map([
+      [existInstallments, installments],
+    ]);
+
+    const isDuplicatedType = new Map([[existType, type]]);
+
+    if (
+      isDuplicatedInstallments.has(installments) &&
+      isDuplicatedType.has(type)
+    ) {
+      throw new AppError('Installments and Type already register!');
     }
 
     const rates = await this.interasteRateRepository.create({
