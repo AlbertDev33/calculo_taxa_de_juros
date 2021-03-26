@@ -195,4 +195,37 @@ describe('Loan Simulation', () => {
 
     await expect(mockSut).rejects.toBeInstanceOf(AppError);
   });
+
+  it('Should return a message error from LoanSimulationUseCase service if any parameters are not informed', async () => {
+    const { sut, requestProviderStub } = makeSut();
+
+    const fakeRequest = {
+      user: {
+        email: 'valid_email',
+        score: 10,
+      },
+      body: {
+        installments: 6,
+        value: 0,
+      },
+    };
+
+    const fakeResponse = (res?: Pick<FakeIResponse, 'send'>) => {
+      return res?.send();
+    };
+
+    jest.spyOn(requestProviderStub, 'post').mockRejectedValue({
+      response: {
+        data: 'Todos os parâmetros devem ser informados',
+        status: 400,
+      },
+    });
+
+    const mockSut = sut.handle(
+      fakeRequest as IRequest,
+      fakeResponse() as FakeIResponse,
+    );
+
+    await expect(mockSut).rejects.toBeInstanceOf(AppError);
+  });
 });
