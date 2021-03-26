@@ -17,4 +17,9 @@ export interface IInterestRateRepository {
     installments,
     rate,
   }: InterestRateDTO): Promise<Rate | undefined>;
+
+  findDuplicatedData({
+    type,
+    installments,
+  }: InterestRateDTO): Promise<Rate | undefined>;
 }
