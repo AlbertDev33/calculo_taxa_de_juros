@@ -169,4 +169,18 @@ describe('Installments Registration', () => {
 
     await expect(response).rejects.toBeInstanceOf(AppError);
   });
+
+  it('Should throw if the rate is invalid', async () => {
+    const { sut } = makeSut();
+
+    const fakeRates = {
+      type: 'SCORE_BAIXO',
+      installments: 6,
+      rate: 0,
+    };
+
+    const response = sut.execute(fakeRates);
+
+    await expect(response).rejects.toBeInstanceOf(AppError);
+  });
 });
