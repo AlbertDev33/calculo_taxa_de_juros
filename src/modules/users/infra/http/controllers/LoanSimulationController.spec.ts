@@ -162,4 +162,37 @@ describe('Loan Simulation', () => {
       'Unexpected error when trying to communicate to Credito Express: Network Error!',
     );
   });
+
+  it('Should return a message error from LoanSimulationUseCase service when the invalid installments number', async () => {
+    const { sut, requestProviderStub } = makeSut();
+
+    const fakeRequest = {
+      user: {
+        email: 'valid_email',
+        score: 10,
+      },
+      body: {
+        installments: 16,
+        value: 1000,
+      },
+    };
+
+    const fakeResponse = (res?: Pick<FakeIResponse, 'json'>) => {
+      return res?.json(fakeRequest);
+    };
+
+    jest.spyOn(requestProviderStub, 'post').mockRejectedValue({
+      response: {
+        data: 'Número de parecelas é inválida',
+        status: 400,
+      },
+    });
+
+    const mockSut = sut.handle(
+      fakeRequest as IRequest,
+      fakeResponse() as FakeIResponse,
+    );
+
+    await expect(mockSut).rejects.toBeInstanceOf(AppError);
+  });
 });
