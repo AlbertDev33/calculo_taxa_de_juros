@@ -1,5 +1,4 @@
 import { AppError } from '../../../../shared/errors/AppError';
-import { ClientRequestError } from '../../../../shared/errors/ClientRequestError';
 import { InternalError } from '../../../../shared/errors/InternalError';
 import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
 import { IInterestRateRepository } from '../../infra/typeorm/repositories/protocol/IInterestRateRepository';
