@@ -1,9 +1,9 @@
-import { IUserSessionSource, IResponse } from '../ConsultSessionUseCase';
+import { IUserSessionSource, IResponseSession } from '../ConsultSessionUseCase';
 
 export interface IConsultSessionUseCase {
   execute({
     email,
     cpf,
     cellPhone,
-  }: Omit<IUserSessionSource, 'score'>): Promise<IResponse>;
+  }: Omit<IUserSessionSource, 'score'>): Promise<IResponseSession>;
 }

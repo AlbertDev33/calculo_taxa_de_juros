@@ -24,7 +24,7 @@ export const Route = (): IRouter => {
 };
 
 export class HttpRequest implements IHttpRequest {
-  async create(
+  async handle(
     request: IRequest,
     response: IResponse,
   ): Promise<IRequest | IResponse> {

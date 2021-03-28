@@ -18,7 +18,7 @@ interface ITokenGeneration extends Omit<IUserSessionSource, 'cellPhone'> {
   negative: boolean;
 }
 
-export interface IResponse {
+export interface IResponseSession {
   user: IUserSessionSource;
   token: string;
 }
@@ -38,7 +38,7 @@ export class ConsultSessionUseCase implements IConsultSessionUseCase {
     email,
     cpf,
     cellPhone,
-  }: IUserSessionSource): Promise<IResponse> {
+  }: IUserSessionSource): Promise<IResponseSession> {
     const isValidCpf = this.cpfValidatorProvider.isValid(cpf);
 
     if (!isValidCpf) {
