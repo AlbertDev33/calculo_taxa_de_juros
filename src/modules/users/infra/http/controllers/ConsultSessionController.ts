@@ -3,9 +3,11 @@ import {
   IRequest,
   IResponse,
 } from '../../../../../shared/providers/ExpressProvider/HttpRequest';
+import { IHttpRequest } from '../../../../../shared/providers/ExpressProvider/protocol/IHttpRequest';
+import { IResponseSession } from '../../../useCases/ConsultSession/ConsultSessionUseCase';
 import { IConsultSessionUseCase } from '../../../useCases/ConsultSession/model/IConsultSessionUseCase';
 
-export class ConsultSessionController {
+export class ConsultSessionController implements IHttpRequest {
   constructor(
     private consultSessionUseCase: IConsultSessionUseCase,
 
@@ -23,6 +25,8 @@ export class ConsultSessionController {
 
     return response
       .status(201)
-      .json(this.transformerProvider.internalTransform(session));
+      .json(
+        this.transformerProvider.internalTransform<IResponseSession>(session),
+      );
   }
 }
