@@ -1,21 +1,21 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import request from 'supertest';
-import { getConnection } from 'typeorm';
+import { Connection } from 'typeorm';
 
-import { openConnection, disconnect } from '../modules/users/infra/typeorm';
-import { RegisterAccountRepository } from '../modules/users/infra/typeorm/repositories/implementations/RegisterAccountRepository';
-import app from '../shared/infra/http/config/app';
-import { BCryptHashProvider } from '../shared/providers/HashProvider/BCryptHashProvider';
+import { RegisterAccountRepository } from '@modules/users/infra/typeorm/repositories/implementations/RegisterAccountRepository';
+import app from '@shared/infra/http/config/app';
+import { openConnection } from '@shared/infra/typeorm';
+import { BCryptHashProvider } from '@shared/providers/HashProvider/BCryptHashProvider';
 
+let connection: Connection;
 describe('Create Session for a User', () => {
   beforeAll(async () => {
-    await openConnection();
+    connection = await openConnection();
   });
 
   afterAll(async () => {
-    const connection = getConnection('mongo');
     await connection.dropDatabase();
-    await disconnect();
+    await connection.close();
   });
 
   it('Should be able to return a session for an unregister user', async () => {

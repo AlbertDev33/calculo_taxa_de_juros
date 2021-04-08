@@ -1,19 +1,20 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import request from 'supertest';
-import { getConnection } from 'typeorm';
+import { Connection } from 'typeorm';
 
-import { openConnection, disconnect } from '../modules/users/infra/typeorm';
+import { openConnection } from '@shared/infra/typeorm';
+
 import app from '../shared/infra/http/config/app';
 
+let connection: Connection;
 describe('Register User', () => {
   beforeAll(async () => {
-    await openConnection();
+    connection = await openConnection();
   });
 
   afterAll(async () => {
-    const connection = getConnection('mongo');
     await connection.dropDatabase();
-    await disconnect();
+    await connection.close();
   });
 
   it('Should be able to register a user with valid cpf and unused email', async () => {
