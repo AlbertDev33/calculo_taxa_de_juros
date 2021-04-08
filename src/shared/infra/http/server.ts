@@ -1,4 +1,4 @@
-import { openConnection } from '../../../modules/users/infra/typeorm';
+import { openConnection } from '../typeorm';
 
 openConnection()
   .then(async () => {

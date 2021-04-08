@@ -1,10 +1,11 @@
 import 'reflect-metadata';
 import 'dotenv/config';
+
 import express from 'express';
 
 import setupMiddlewares from './middlewares';
 
-import '../../../../modules/users/infra/typeorm';
+import '@shared/infra/typeorm';
 
 const app = express();
 setupMiddlewares(app);
