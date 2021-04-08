@@ -9,7 +9,7 @@ export class InterestRateRepository implements IInterestRateRepository {
   private ormRepository: MongoRepository<Rate>;
 
   constructor() {
-    this.ormRepository = getMongoRepository(Rate, 'mongo');
+    this.ormRepository = getMongoRepository<Rate>(Rate);
   }
 
   async findRateLowScore({

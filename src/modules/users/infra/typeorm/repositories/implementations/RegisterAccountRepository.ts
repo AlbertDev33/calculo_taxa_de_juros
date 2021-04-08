@@ -10,7 +10,7 @@ export class RegisterAccountRepository implements IRegisterAccountRepository {
   private static INSTANCE: RegisterAccountRepository;
 
   constructor() {
-    this.ormRepository = getMongoRepository(Account, 'mongo');
+    this.ormRepository = getMongoRepository<Account>(Account);
   }
 
   static getInstance(): RegisterAccountRepository {
