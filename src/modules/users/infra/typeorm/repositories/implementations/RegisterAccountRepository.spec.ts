@@ -1,17 +1,18 @@
-import { getConnection } from 'typeorm';
+import { Connection, getConnection } from 'typeorm';
 
-import { disconnect, openConnection } from '../../index';
+import { openConnection } from '@shared/infra/typeorm';
+
 import { RegisterAccountRepository } from './RegisterAccountRepository';
 
+let connection: Connection;
 describe('Register Account on Mongo', () => {
   beforeAll(async () => {
-    await openConnection();
+    connection = await openConnection();
   });
 
   afterAll(async () => {
-    const connection = getConnection('mongo');
     await connection.dropDatabase();
-    await disconnect();
+    await connection.close();
   });
 
   it('Should return an account on success', async () => {
