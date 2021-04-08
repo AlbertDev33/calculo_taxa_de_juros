@@ -101,7 +101,7 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
     );
 
     if (!findInterestRate) {
-      throw new InternalError('Internal Error', 500);
+      throw new InternalError('Non exists register installments');
     }
 
     const response = await this.callApiCreditExpress({
@@ -120,6 +120,10 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
     const findInterestRate = await this.interestRateRepository.findRateLowScore(
       { type, installments },
     );
+
+    if (!findInterestRate) {
+      throw new InternalError('Non exists register installments');
+    }
 
     return findInterestRate?.rate;
   }

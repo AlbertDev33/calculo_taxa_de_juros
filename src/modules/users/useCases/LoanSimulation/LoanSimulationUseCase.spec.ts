@@ -1,5 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
+import { InternalError } from '@shared/errors/InternalError';
+
 import { AppError } from '../../../../shared/errors/AppError';
 import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
 import {
@@ -247,6 +249,8 @@ describe('Loan Simulation', () => {
 
     const loanSimulation = sut.execute(fakeAccount);
 
-    await expect(loanSimulation).rejects.toThrow('Internal Error');
+    await expect(loanSimulation).rejects.toEqual(
+      new InternalError('Non exists register installments'),
+    );
   });
 });
