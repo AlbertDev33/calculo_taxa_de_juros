@@ -1,10 +1,10 @@
-import { AppError } from '../../../../shared/errors/AppError';
-import { InternalError } from '../../../../shared/errors/InternalError';
-import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
-import { IInterestRateRepository } from '../../infra/typeorm/repositories/protocol/IInterestRateRepository';
-import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
-import { IRequest } from '../CreateUser/RegisterUseCase';
-import { ILoanSimulationUseCase } from './model/ILoanSimulationUseCase';
+import { IInterestRateRepository } from '@modules/users/infra/typeorm/repositories/protocol/IInterestRateRepository';
+import { IRegisterAccountRepository } from '@modules/users/infra/typeorm/repositories/protocol/IRegisterAccountRepository';
+import { IRequest } from '@modules/users/useCases/CreateUser/RegisterUseCase';
+import { ILoanSimulationUseCase } from '@modules/users/useCases/LoanSimulation/model/ILoanSimulationUseCase';
+import { AppError } from '@shared/errors/AppError';
+import { InternalError } from '@shared/errors/InternalError';
+import { IRequestProvider } from '@shared/providers/AxiosProvider/protocol/IRequestProvider';
 
 enum TypeScore {
   SCORE_BAIXO = 'SCORE_BAIXO',
@@ -48,6 +48,7 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
     installments,
     value,
   }: ILoanSimulationSource): Promise<IResponseSource> {
+    const mediumScore = 500;
     const user = await this.registerAccountRepository.findByEmail(email);
 
     if (score < 0) {
@@ -74,7 +75,7 @@ export class LoanSimulationUseCase implements ILoanSimulationUseCase {
       return responseApi;
     }
 
-    if (user.score <= 500) {
+    if (user.score <= mediumScore) {
       const type = TypeScore.SCORE_BAIXO;
       const findInterestRate = await this.returnFeeToLowScore(
         type,

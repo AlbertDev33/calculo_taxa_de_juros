@@ -1,21 +1,20 @@
 /* eslint-disable max-classes-per-file */
 
+import { ICreateInstallmentsDTO } from '@modules/users/dtos/ICreateInstallmentsDTO';
+import { InterestRateDTO } from '@modules/users/dtos/InterestRateDTO';
+import { IRegisterAccountDTO } from '@modules/users/dtos/IRegisterAccountDTO';
+import { IInterestRateRepository } from '@modules/users/infra/typeorm/repositories/protocol/IInterestRateRepository';
+import { IRegisterAccountRepository } from '@modules/users/infra/typeorm/repositories/protocol/IRegisterAccountRepository';
+import { Account } from '@modules/users/infra/typeorm/schema/Account';
+import { Rate } from '@modules/users/infra/typeorm/schema/Rate';
+import { LoanSimulationUseCase } from '@modules/users/useCases/LoanSimulation/LoanSimulationUseCase';
+import { AppError } from '@shared/errors/AppError';
 import { InternalError } from '@shared/errors/InternalError';
-
-import { AppError } from '../../../../shared/errors/AppError';
-import { IRequestProvider } from '../../../../shared/providers/AxiosProvider/protocol/IRequestProvider';
+import { IRequestProvider } from '@shared/providers/AxiosProvider/protocol/IRequestProvider';
 import {
   IRequestConfig,
   IResponse,
-} from '../../../../shared/providers/AxiosProvider/RequestProvider';
-import { ICreateInstallmentsDTO } from '../../dtos/ICreateInstallmentsDTO';
-import { InterestRateDTO } from '../../dtos/InterestRateDTO';
-import { IRegisterAccountDTO } from '../../dtos/IRegisterAccountDTO';
-import { IInterestRateRepository } from '../../infra/typeorm/repositories/protocol/IInterestRateRepository';
-import { IRegisterAccountRepository } from '../../infra/typeorm/repositories/protocol/IRegisterAccountRepository';
-import { Account } from '../../infra/typeorm/schema/Account';
-import { Rate } from '../../infra/typeorm/schema/Rate';
-import { LoanSimulationUseCase } from './LoanSimulationUseCase';
+} from '@shared/providers/AxiosProvider/RequestProvider';
 
 interface ISutTypes {
   sut: LoanSimulationUseCase;
